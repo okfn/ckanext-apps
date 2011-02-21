@@ -7,10 +7,15 @@ except ImportError:
     __path__ = pkgutil.extend_path(__path__, __name__)
 
 import meta
+
+from tag import *
 from application import *
+from idea import *
 
 def init_model(engine):
     meta.Session.configure(bind=engine)
     meta.engine = engine
     meta.metadata.bind = engine
     meta.metadata.create_all(bind=meta.metadata.bind)
+    meta.metadata.reflect()
+

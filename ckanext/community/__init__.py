@@ -24,21 +24,14 @@ class Community(SingletonPlugin):
     implements(IConfigurer, inherit=True)
         
     def after_map(self, map):
-        map.connect('app', '/app',
-            controller='ckanext.community.controller:AppController',
-            action='index')
-        map.connect('app_action', '/app/{action}',
-            controller='ckanext.community.controller:AppController')
-        map.connect('idea', '/idea',
-            controller='ckanext.community.controller:IdeaController',
-            action='index')
-        map.connect('idea_action', '/idea/{action}',
-            controller='ckanext.community.controller:IdeaController')
+        map.resource('app', 'ckanext.community.controllers.application:AppController')
+        map.resource('idea', 'ckanext.community.controllers.idea:IdeaController')
         return map
 
     def update_config(self, config):
         """We use update_config here to get the main config from the
-        application and create our extensions engine and metadata.
+        application and create our extensions engine and metadata as well as
+        test our templates and public folders for the extension.
         """
         engine = engine_from_config(config, 'sqlalchemy.', pool_threadlocal=True)
         init_model(engine)

@@ -1,5 +1,4 @@
-import uuid
-
+from ckan.model.types import JsonDictType, make_uuid
 from meta import *
 
 __all__ = ['application_table', 'application_tag_table',
@@ -9,7 +8,7 @@ __all__ = ['application_table', 'application_tag_table',
 APPLICATION_NAME_MAX_LENGTH = 100
 
 application_table = Table('ckanext_community_application', metadata,
-        Column('id', types.UnicodeText, primary_key=True, default=unicode(uuid.uuid4())),
+        Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
         Column('name', types.Unicode(APPLICATION_NAME_MAX_LENGTH),
                nullable=False, unique=True),
         Column('description', types.UnicodeText),
@@ -17,6 +16,7 @@ application_table = Table('ckanext_community_application', metadata,
         Column('developed_by', types.UnicodeText),
         Column('submitter', types.UnicodeText),
         Column('submitter_email', types.UnicodeText),
+        Column('extras', JsonDictType)
         )
 
 application_tag_table = Table('ckanext_community_application_tag', metadata,
@@ -27,8 +27,18 @@ application_tag_table = Table('ckanext_community_application_tag', metadata,
         )
 
 class Application(object):
-    pass
-                    
+    def __init__(self, name=u'', url=u'', description=u'',
+                 developed_by=u'', submitter_email=u'', submitter=u'',
+                 extras=None,
+                 **kwargs):
+        self.name = name
+        self.url = url
+        self.description = description
+        self.developed_by = developed_by
+        self.submitter_email = submitter_email
+        self.submitter = submitter
+        self.extras = extras or {}
+        
 class ApplicationTag(object):
     def __init__(self, application=None, tag=None, state=None, **kwargs):
         self.application = application
@@ -50,8 +60,9 @@ class ApplicationTag(object):
             
 mapper(Application, application_table, properties={
         'tags':relation(ApplicationTag, secondary=application_tag_table,
-            cascade='all, delete, delete-orphan',
-            primaryjoin=application_table.c.id==application_tag_table.c.application_id)
+            cascade='all, delete',
+            primaryjoin=application_table.c.id==application_tag_table.c.application_id,
+            secondaryjoin='tag.id'==application_tag_table.c.tag_id),
         },
     )
 
