@@ -5,13 +5,13 @@ from ckan.lib.base import BaseController, c, g, request, \
                           
 class AppController(BaseController):
     def index(self, format='html'):
-        pass
+        return render('ckanext/community/apps.html')
     
     def create(self):
-        pass
+        return None
         
     def new(self, format='html'):
-        pass
+        return render('ckanext/community/apps_new.html')
         
     def update(self, id):
         pass

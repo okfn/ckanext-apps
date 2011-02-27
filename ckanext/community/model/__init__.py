@@ -8,7 +8,6 @@ except ImportError:
 
 import meta
 
-from tag import *
 from application import *
 from idea import *
 

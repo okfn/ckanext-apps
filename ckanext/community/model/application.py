@@ -15,7 +15,6 @@ application_table = Table('ckanext_community_application', metadata,
         Column('url', types.UnicodeText),
         Column('developed_by', types.UnicodeText),
         Column('submitter', types.UnicodeText),
-        Column('submitter_email', types.UnicodeText),
         Column('extras', JsonDictType)
         )
 

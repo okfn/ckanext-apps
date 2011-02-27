@@ -23,9 +23,9 @@ class Community(SingletonPlugin):
     implements(IRoutes, inherit=True)
     implements(IConfigurer, inherit=True)
         
-    def after_map(self, map):
-        map.resource('app', 'ckanext.community.controllers.application:AppController')
-        map.resource('idea', 'ckanext.community.controllers.idea:IdeaController')
+    def before_map(self, map):
+        map.resource('app', 'apps', controller='ckanext.community.controllers.application:AppController')
+        map.resource('idea', 'ideas', contorller='ckanext.community.controllers.idea:IdeaController')
         return map
 
     def update_config(self, config):

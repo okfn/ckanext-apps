@@ -5,7 +5,7 @@ from ckan.lib.base import BaseController, c, g, request, \
                           
 class IdeaController(BaseController):
     def index(self, format='html'):
-        pass
+        return render('ckanext/community/ideas.html')
     
     def create(self):
         pass
