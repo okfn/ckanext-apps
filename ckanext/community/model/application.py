@@ -1,3 +1,4 @@
+from ckan.model.tag import Tag
 from ckan.model.types import JsonDictType, make_uuid
 from meta import *
 
@@ -27,17 +28,25 @@ application_tag_table = Table('ckanext_community_application_tag', metadata,
 
 class Application(object):
     def __init__(self, name=u'', url=u'', description=u'',
-                 developed_by=u'', submitter_email=u'', submitter=u'',
+                 developed_by=u'', submitter=u'',
                  extras=None,
                  **kwargs):
         self.name = name
         self.url = url
         self.description = description
         self.developed_by = developed_by
-        self.submitter_email = submitter_email
         self.submitter = submitter
         self.extras = extras or {}
         
+        tags = kwargs.get('tags')
+        if tags:
+            for tag_str in tags:
+                tag = Session.query(Tag).filter_by(name=tag_str).one()
+                if tag:
+                    self.tags.append(ApplicationTag(self, tag))
+                else:
+                    self.tags.append(ApplicationTag(self, Tag(name=tag_str)))
+                
 class ApplicationTag(object):
     def __init__(self, application=None, tag=None, state=None, **kwargs):
         self.application = application

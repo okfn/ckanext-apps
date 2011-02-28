@@ -1,14 +1,30 @@
+import colander
+
+from ckan.lib.base import BaseController, c, g, request, h, \
+                          response, session, render, config, abort
+
 from ..model import Application
 from ..model.meta import Session
-from ckan.lib.base import BaseController, c, g, request, \
-                          response, session, render, config, abort
-                          
+
+from ..dictization import application_dict_from_form
+from ..dictization import application_details
+
 class AppController(BaseController):
-    def index(self, format='html'):
+    def index(self, format='html'):                
         return render('ckanext/community/apps.html')
     
     def create(self):
-        return None
+        try:
+            application_dict = application_dict_from_form(request.params)
+        except colander.Invalid, e:
+            c.errors = e.asdict()
+            return render('ckanext/community/apps_new.html')
+            
+        app = Application(*application_dict)
+        Session.add(app)
+        Session.flush()
+        
+        return h.redirect_to(h.url_for('app', id=app.name))
         
     def new(self, format='html'):
         return render('ckanext/community/apps_new.html')
@@ -20,7 +36,10 @@ class AppController(BaseController):
         pass
 
     def show(self, id, format='html'):
-        pass
+        application_name = id
+        c.app = application_details(application_name)
+        return render('ckanext/community/apps_show.html')
             
     def edit(self, id, format='html'):
         pass
+

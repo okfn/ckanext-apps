@@ -26,6 +26,15 @@ class Community(SingletonPlugin):
     def before_map(self, map):
         map.resource('app', 'apps', controller='ckanext.community.controllers.application:AppController')
         map.resource('idea', 'ideas', contorller='ckanext.community.controllers.idea:IdeaController')
+        
+        map.connect('app_api', '/api/2/util/apps/{action}',
+            conditions=dict(method=['GET']),
+            controller='ckanext.community.controllers.api:ApiController')
+                
+        map.connect('app_api_resource', '/api/2/util/apps/{action}/:id',
+            conditions=dict(method=['GET']),
+            controller='ckanext.community.controllers.api:ApiController')
+            
         return map
 
     def update_config(self, config):
