@@ -16,5 +16,5 @@ def init_model(engine):
     meta.engine = engine
     meta.metadata.bind = engine
     meta.metadata.create_all(bind=meta.metadata.bind)
-    meta.metadata.reflect()
+    #meta.metadata.reflect()
 

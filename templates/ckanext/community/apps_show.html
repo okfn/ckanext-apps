@@ -13,7 +13,6 @@
     
     <div id="content-header">
     <h1 class="title">${c.app.get('name')}</h1>
-    <div id="tagline">Posted by ${c.app.get('submitter')} on DATETIMESTAMP</div>
     </div>
                                                                                         
     <table>
@@ -22,7 +21,7 @@
     			<th>Overview</th>
     			<td>
     			<div>
-    			<p>${c.app.url}</p>
+    			<p>${c.app.description}</p>
     			</div>
     			</td>
     		</tr>
@@ -46,6 +45,14 @@
     			    </ul>
     			</div>
     			</td>
+    		</tr>
+    		<tr>
+    		    <th>Submitted By</th>
+    		    <td>${c.app.get('submitter')}</td>
+    		</tr>
+    		<tr>
+    		    <th>Submitted</th>
+    		    <td>${c.app.created}</td>
     		</tr>
     	</tbody>
     </table>

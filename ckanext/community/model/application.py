@@ -1,3 +1,4 @@
+from datetime import datetime
 from ckan.model.tag import Tag
 from ckan.model.types import JsonDictType, make_uuid
 from meta import *
@@ -16,6 +17,7 @@ application_table = Table('ckanext_community_application', metadata,
         Column('url', types.UnicodeText),
         Column('developed_by', types.UnicodeText),
         Column('submitter', types.UnicodeText),
+         Column('created', DateTime, default=datetime.now),
         Column('extras', JsonDictType)
         )
 

@@ -46,13 +46,13 @@
       
      <dl>
         <dt>
-        <label class="field_req" for="Application--name">
+        <label class="field_req" for="name">
         Name
         *
         </label>
         </dt>
         <dd>
-        <input id="Application--name" name="name" type="text" />
+        <input id="name" name="name" type="text" />
         </dd>
         
         
@@ -115,7 +115,7 @@
           <a href="${h.url_for(controller='user', action='login', id=None)}" target="_blank">Click here to sign in</a> before saving (opens in new window).
           </p>
         </div>
-        <input type="hidden" name="submitter" value="{$c.author}" />
+        <input type="hidden" name="submitter" value="${c.author}" />
       <div class="submit">
               <input id="save" name="save" type="submit" value="Save" />
             </div>

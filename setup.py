@@ -28,6 +28,6 @@ setup(
 	"""
     [ckan.plugins]
 	# Add plugins here, eg
-	community=ckanext.community:Community
+	community=ckanext.community.plugin:Community
 	""",
 )
