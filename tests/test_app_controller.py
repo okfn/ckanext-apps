@@ -18,7 +18,7 @@ class TestAppController:
         CreateTestData.delete()
             
     def test_index(self):
-        url = url_for('app')
+        url = url_for('apps')
         response = self.app.get(url)
-        assert 'Application' in response, response
+        assert 'Apps' in response, response
 

@@ -16,9 +16,5 @@ class TestIdeaController:
     @classmethod
     def teardown_class(self):
         CreateTestData.delete()
-            
-    def test_index(self):
-        url = url_for('idea')
-        response = self.app.get(url)
-        assert 'Idea' in response, response
+
 
