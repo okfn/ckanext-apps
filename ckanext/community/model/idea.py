@@ -24,9 +24,10 @@ idea_table = Table('ckanext_community_idea', metadata,
 
 idea_tag_table = Table('ckanext_community_idea_tag', metadata,
         Column('id', types.UnicodeText, primary_key=True),
-        Column('idea_id', types.UnicodeText, \
-                ForeignKey('ckanext_community_idea.id')),
-        Column('tag_id', types.UnicodeText) # this will use a primaryjoin
+        Column('idea_id', types.UnicodeText,
+            ForeignKey('ckanext_community_idea.id')),
+        Column('tag_id', types.UnicodeText,
+            ForeignKey(tag_table.c.id))
         )
 
 class Idea(object):
@@ -96,12 +97,14 @@ class IdeaTag(object):
     
     @classmethod
     def by_tag(cls, idea, tag):
-        match = Session.query(cls).filter(cls.tag_id==tag.id).first()
+        match = Session.query(cls).\
+            filter(and_(cls.tag_id==tag.id,
+                        cls.idea_id==idea.id)).first()
         if match:
             return match
         else:
             return cls(idea, tag)
-
+                    
     def __repr__(self):
         return '<IdeaTag idea=%s tag=%s>' % (self.idea.name, self.tag.name)
 
@@ -114,16 +117,19 @@ class IdeaTag(object):
         return q.first()
             
 mapper(Idea, idea_table, properties={
-        'tags':relation(IdeaTag, secondary=idea_tag_table,
+        'tags':relation(IdeaTag, secondary=idea_tag_table, viewonly=True,
             cascade='all, delete',
             primaryjoin=idea_table.c.id==idea_tag_table.c.idea_id,
-            secondaryjoin='tag.id'==idea_tag_table.c.tag_id),
+            secondaryjoin=tag_table.c.id==idea_tag_table.c.tag_id),
         },
     )
-
+    
 mapper(IdeaTag, idea_tag_table, properties={
-        'tag':relation(Tag,
-            primaryjoin=idea_tag_table.c.tag_id==tag_table.c.id,
-            foreign_keys=idea_tag_table.c.tag_id),
-        }
+        'tag':relation(Tag),
+        'idea':relation(Idea),
+        },
+        primary_key=[
+            idea_tag_table.c.tag_id,
+            idea_tag_table.c.idea_id
+        ]
     )

@@ -45,7 +45,7 @@ def application_to_python(application):
         developed_by=application.developed_by,
         submitter=application.submitter,
         extras=application.extras,
-        tags=[tag.name for tag in application.tags],
+        tags=[app_tag.tag.name for app_tag in application.tags],
         created=application.created.strftime('%c'),
     )
 

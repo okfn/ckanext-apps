@@ -1,4 +1,7 @@
 from datetime import datetime
+
+from sqlalchemy import and_
+
 from ckan.lib.munge import munge_title_to_name
 from ckan.model.tag import Tag, tag_table
 from ckan.model.types import JsonDictType, make_uuid
@@ -25,10 +28,10 @@ application_table = Table('ckanext_community_application', metadata,
         )
 
 application_tag_table = Table('ckanext_community_application_tag', metadata,
-        Column('id', types.UnicodeText, primary_key=True),
-        Column('application_id', types.UnicodeText, \
-                ForeignKey('ckanext_community_application.id')),
-        Column('tag_id', types.UnicodeText) # this will use a primaryjoin
+        Column('application_id', types.UnicodeText,
+            ForeignKey('ckanext_community_application.id')),
+        Column('tag_id', types.UnicodeText,
+            ForeignKey(tag_table.c.id))
         )
 
 class Application(object):
@@ -47,6 +50,7 @@ class Application(object):
         tags = kwargs.get('tags')
         for tag in tags.split(' '):
             pass
+            #self.add_tag_by_name(tag)
 
     @classmethod          
     def gen_name(cls, title):
@@ -93,6 +97,8 @@ class Application(object):
         tags = kwargs.get('tags')
         for tag in tags.split(' '):
             pass
+            #self.add_tag_by_name(tag)
+            
 class ApplicationTag(object):
     def __init__(self, application=None, tag=None, state=None, **kwargs):
         self.application = application
@@ -103,7 +109,9 @@ class ApplicationTag(object):
     
     @classmethod
     def by_tag(cls, app, tag):
-        match = Session.query(cls).filter(cls.tag_id==tag.id).first()
+        match = Session.query(cls).\
+            filter(and_(cls.tag_id==tag.id,
+                        cls.application_id==app.id)).first()
         if match:
             return match
         else:
@@ -121,16 +129,20 @@ class ApplicationTag(object):
         return q.first()
             
 mapper(Application, application_table, properties={
-        'tags':relation(ApplicationTag, secondary=application_tag_table,
+        'tags':relation(ApplicationTag, secondary=application_tag_table, viewonly=True,
             cascade='all, delete',
             primaryjoin=application_table.c.id==application_tag_table.c.application_id,
-            secondaryjoin='tag.id'==application_tag_table.c.tag_id),
-        },
+            secondaryjoin=tag_table.c.id==application_tag_table.c.tag_id,
+        )
+        }
     )
 
 mapper(ApplicationTag, application_tag_table, properties={
-        'tag':relation(Tag,
-            primaryjoin=application_tag_table.c.tag_id==tag_table.c.id,
-            foreign_keys=application_tag_table.c.tag_id),
-        }
+        'tag':relation(Tag),
+        'application':relation(Application),
+        },
+        primary_key=[
+            application_tag_table.c.tag_id,
+            application_tag_table.c.application_id
+        ]
     )
