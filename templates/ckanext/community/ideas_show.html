@@ -3,7 +3,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   py:strip="">
 
-  <py:def function="page_title">${c.app.get('title')}</py:def>
+  <py:def function="page_title">${c.idea.get('title')}</py:def>
 
   <py:def function="optional_head">
     <link type="text/css" rel="stylesheet" media="all" href="/ckanext/community/style.css" />
@@ -13,9 +13,9 @@
 <div py:match="content" class="community-content">
     
     <div id="content-header">
-    <h1 class="title">${c.app.get('title')}</h1>
+    <h1 class="title">${c.idea.get('title')}</h1>
         
-    <form py:if="c.auth_for_update" method="get" action="${h.url_for(controller='apps', id='edit', action=c.app.get('name'))}">
+    <form py:if="c.auth_for_update" method="get" action="${h.url_for(controller='ideas', id='edit', action=c.idea.get('name'))}">
     <input type="submit" value="Edit" />
     </form>
     
@@ -32,26 +32,18 @@
     			<th>Overview</th>
     			<td>
     			<div>
-    			<p>${c.app.description}</p>
+    			<p>${c.idea.description}</p>
     			</div>
     			</td>
     		</tr>
 
     		<tr>
-    			<th>App URL</th>
-    			<td>
-    			<div>
-    			<a href="${c.app.url}" class="ext">${c.app.url}</a><span class="ext"></span>
-    			</div>
-    			</td>
-    		</tr>
-    		<tr>
     			<th>Tags</th>
     			<td>
     			<div>
     			    <ul>
-    			        <li py:for="tag in c.app.tags">
-    			            ${tag}
+    			        <li py:for="tag in c.idea.tags">
+    			            <a href="#">${tag}</a> 
     			        </li>
     			    </ul>
     			</div>
@@ -59,11 +51,11 @@
     		</tr>
     		<tr>
     		    <th>Submitted By</th>
-    		    <td>${c.app.get('submitter')}</td>
+    		    <td>${c.idea.get('submitter')}</td>
     		</tr>
     		<tr>
     		    <th>Submitted</th>
-    		    <td>${c.app.created}</td>
+    		    <td>${c.idea.created}</td>
     		</tr>
     	</tbody>
     </table>

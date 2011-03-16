@@ -3,7 +3,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   py:attrs="{'class':'has-errors'} if c.errors else {}"
       >
- <py:def function="page_title">Create/Update Apps</py:def>
+ <py:def function="page_title">Create/Update Ideas</py:def>
  
  <py:def function="optional_head">
   <link rel="stylesheet" href="${g.site_url}/css/forms.css" type="text/css" media="screen, print" />
@@ -22,29 +22,29 @@
  </py:def>
 
   <div py:match="content">
-    <h3 py:if="c.auth_for_create">Submit a New Application</h3>
-    <h3 py:if="c.auth_for_update">Update Existing Application</h3>
-    <p>All application submissions are reviewed and must be approved before they will display on the site.</p>
+    <h3 py:if="c.auth_for_create">Submit a New Idea</h3>
+    <h3 py:if="c.auth_for_update">Update Existing Idea</h3>
+    <p>All idea submissions are reviewed and must be approved before they will display on the site.</p>
 
     <?python
         form_attributes = {}
         if c.errors:
             form_attributes['class'] = 'has-errors'
         if c.auth_for_create:
-            form_attributes['id'] = 'apps-create'
-            form_attributes['action'] = '/apps'
+            form_attributes['id'] = 'ideas-create'
+            form_attributes['action'] = '/ideas'
         elif c.auth_for_update:
-            form_attributes['id'] = 'apps-update'
-            form_attributes['action'] = '/apps/' + c.params.get('name')
+            form_attributes['id'] = 'ideas-update'
+            form_attributes['action'] = '/ideas/' + c.params.get('name')
     ?>
-    <form action="/apps" method="post"
+    <form action="/ideas" method="post"
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:attrs="form_attributes"
       >
      <input py:if="c.auth_for_update" type="hidden" name="_method" value="PUT" />
      <fieldset>
-      <legend>Application Information</legend>
+      <legend>Idea Information</legend>
       <py:if test="c.errors">
         <div class="error-explanation">
             <h2>Errors in form</h2> 
@@ -60,7 +60,7 @@
      <dl>
         <dt>
         <label class="field_req" for="title">
-        Name
+        What is your idea?
         *
         </label>
         </dt>
@@ -94,27 +94,6 @@
         <dd class="instructions further" style="display: none; ">It is often displayed with the application name. In particular, it should start with a short sentence that describes the application succinctly, because the first few words alone may be used in some views of the applications.</dd>
         <dd class="hints">You can use <a href="http://daringfireball.net/projects/markdown/syntax">Markdown formatting</a> here.</dd>
         
-        
-        <dt>
-        <label class="field_req" for="url">
-        App Link
-        *
-        </label>
-        </dt>
-        <dd>
-        <input id="url" name="url" type="text" value="${c.params.get('url')}" />
-        </dd>
-        <dd class="instructions basic">The URL of the application</dd>
-        
-        
-        <dt>
-        <label class="field_opt" for="developed_by">
-        Developed By
-        </label>
-        </dt>
-        <dd>
-        <input id="developed_by" name="developed_by" type="text" value="${c.params.get('developed_by')}"/>
-        </dd>
       </dl>
       </fieldset>
       
