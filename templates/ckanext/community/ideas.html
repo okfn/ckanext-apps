@@ -10,8 +10,32 @@
   </py:def>
   
 <div py:match="content" class="community-content">
+  <h3>
+      ${h.link_to('Share your idea', h.url_for(controller='ideas', action='new'))}
+  </h3>
+  
   <h1>Ideas</h1>
-
+  <table>
+  	<tbody>
+  	    <tr>
+  	        <th>Name</th>
+  	        <th>Description</th>
+  	    </tr>
+  	    
+  	    <py:for each="idea in c.ideas">
+  		<tr>
+  		    <td>
+  		        ${h.link_to(idea.get('name'), h.url_for(controller='ideas', action=idea.get('name')))}
+  		    </td>
+  			<td>
+  			<div>
+  			<p>${idea.get('description')}</p>
+  			</div>
+  			</td>
+  		</tr>
+  		</py:for>
+  	</tbody>
+  </table>
   <p>
     Page last updated:
      <?python 

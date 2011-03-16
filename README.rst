@@ -22,7 +22,7 @@ able to add the following to your CKAN .ini file::
     ckan.plugins = community <other-plugins>
  
 After you clear your cache and reload the site, the Comunity plugin
-and should be available at http://myckaninstance/app and http://myckaninstance/idea
+and should be available at http://myckaninstance/apps and http://myckaninstance/ideas
 
 Developers
 ----------

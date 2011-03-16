@@ -17,16 +17,23 @@ class Community(SingletonPlugin):
         
     def before_map(self, map):
         map.resource('app', 'apps', controller='ckanext.community.controllers.application:AppController')
-        map.resource('idea', 'ideas', contorller='ckanext.community.controllers.idea:IdeaController')
+        map.resource('idea', 'ideas', controller='ckanext.community.controllers.idea:IdeaController')
         
         map.connect('app_api', '/api/2/util/apps/{action}',
             conditions=dict(method=['GET']),
-            controller='ckanext.community.controllers.api:ApiController')
+            controller='ckanext.community.controllers.api:AppApiController')
                 
         map.connect('app_api_resource', '/api/2/util/apps/{action}/:id',
             conditions=dict(method=['GET']),
-            controller='ckanext.community.controllers.api:ApiController')
-            
+            controller='ckanext.community.controllers.api:AppApiController')
+                
+        map.connect('idea_api', '/api/2/util/ideas/{action}',
+            conditions=dict(method=['GET']),
+            controller='ckanext.community.controllers.api:IdeaApiController')
+        
+        map.connect('idea_api_resource', '/api/2/util/ideas/{action}/:id',
+            conditions=dict(method=['GET']),
+            controller='ckanext.community.controllers.api:IdeaApiController')
         return map
 
     def update_config(self, config):
@@ -34,7 +41,7 @@ class Community(SingletonPlugin):
         application and create our extensions engine and metadata as well as
         test our templates and public folders for the extension.
         """
-        engine = engine_from_config(config, 'sqlalchemy.', pool_threadlocal=True)
+        engine = engine_from_config(config, 'sqlalchemy.', strategy="threadlocal", pool_threadlocal=True)
         init_model(engine)
          
         here = os.path.dirname(__file__)

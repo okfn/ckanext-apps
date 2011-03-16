@@ -8,8 +8,8 @@ except ImportError:
 
 import meta
 
-from application import *
-from idea import *
+from .idea import *
+from .application import *
 
 def init_model(engine):
     meta.Session.configure(bind=engine)
