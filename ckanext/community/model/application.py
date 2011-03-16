@@ -49,8 +49,7 @@ class Application(object):
         
         tags = kwargs.get('tags')
         for tag in tags.split(' '):
-            pass
-            #self.add_tag_by_name(tag)
+            self.add_tag_by_name(tag)
 
     @classmethod          
     def gen_name(cls, title):
@@ -75,9 +74,10 @@ class Application(object):
             return
         
         tag = Tag.by_name(tagname, autoflush=autoflush)
+        tag = Session.merge(tag)
         if not tag:
             tag = Tag(name=tagname)
-            
+
         app_tag = ApplicationTag.by_tag(self, tag)
         if not app_tag in self.tags:
             self.tags.append(app_tag)
@@ -94,10 +94,14 @@ class Application(object):
         self.submitter = submitter
         self.extras = extras or {}
 
+        [Session.delete(app_tag)
+            for app_tag in Session.query(ApplicationTag).\
+                filter_by(application_id=self.id)]
+        Session.flush()
+        
         tags = kwargs.get('tags')
         for tag in tags.split(' '):
-            pass
-            #self.add_tag_by_name(tag)
+            self.add_tag_by_name(tag)
             
 class ApplicationTag(object):
     def __init__(self, application=None, tag=None, state=None, **kwargs):

@@ -23,7 +23,6 @@ idea_table = Table('ckanext_community_idea', metadata,
         )
 
 idea_tag_table = Table('ckanext_community_idea_tag', metadata,
-        Column('id', types.UnicodeText, primary_key=True),
         Column('idea_id', types.UnicodeText,
             ForeignKey('ckanext_community_idea.id')),
         Column('tag_id', types.UnicodeText,
@@ -41,7 +40,7 @@ class Idea(object):
         
         tags = kwargs.get('tags')
         for tag in tags.split(' '):
-            pass
+            self.add_tag_by_name(tag)
 
     @classmethod          
     def gen_name(cls, title):
@@ -66,6 +65,7 @@ class Idea(object):
             return
         
         tag = Tag.by_name(tagname, autoflush=autoflush)
+        tag = Session.merge(tag)
         if not tag:
             tag = Tag(name=tagname)
             
@@ -83,9 +83,14 @@ class Idea(object):
         self.submitter = submitter
         self.extras = extras or {}
 
+        [Session.delete(idea_tag)
+            for idea_tag in Session.query(IdeaTag).\
+                filter_by(idea_id=self.id)]
+        Session.flush()
+        
         tags = kwargs.get('tags')
         for tag in tags.split(' '):
-            pass
+            self.add_tag_by_name(tag)
             
 class IdeaTag(object):
     def __init__(self, idea=None, tag=None, state=None, **kwargs):

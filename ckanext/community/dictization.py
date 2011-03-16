@@ -17,7 +17,10 @@ def idea_to_python(idea):
         description=idea.description,
         submitter=idea.submitter,
         extras=idea.extras,
-        tags=[tag.name for tag in idea.tags],
+        tags=[dict(
+                id=idea_tag.tag.id,
+                name=idea_tag.tag.name
+              ) for idea_tag in idea.tags],
         created=idea.created.strftime('%c'),
     )
     
@@ -45,7 +48,10 @@ def application_to_python(application):
         developed_by=application.developed_by,
         submitter=application.submitter,
         extras=application.extras,
-        tags=[app_tag.tag.name for app_tag in application.tags],
+        tags=[dict(
+                id=app_tag.tag.id,
+                name=app_tag.tag.name
+              ) for app_tag in application.tags],
         created=application.created.strftime('%c'),
     )
 

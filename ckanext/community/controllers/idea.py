@@ -80,7 +80,6 @@ class IdeaController(BaseController):
     def show(self, id, format='html'):
         c.auth_for_update = self.authorizer.am_authorized(c, Action.CHANGE_STATE, System())
         c.auth_for_delete = self.authorizer.am_authorized(c, Action.PURGE, System())
-        c.auth_for_update = True
         idea_name = id
         c.idea = idea_details(idea_name)
         if not c.idea:
