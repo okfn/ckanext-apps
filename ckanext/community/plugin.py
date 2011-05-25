@@ -16,8 +16,37 @@ class Community(SingletonPlugin):
     implements(IConfigurer, inherit=True)
         
     def before_map(self, map):
-        map.resource('app', 'apps', controller='ckanext.community.controllers.application:AppController')
-        map.resource('idea', 'ideas', controller='ckanext.community.controllers.idea:IdeaController')
+        app_controller = 'ckanext.community.controllers.application:AppController'
+        map.redirect("/apps", "/app")
+        map.redirect("/apps/{url:.*}", "/app/{url}")
+        map.connect('/app/{action}', controller=app_controller,
+        requirements=dict(action='|'.join([
+                        'create',
+                        'new',
+                        'update',
+                        'edit',
+                        'delete',
+                        'show',
+                        ]))
+                    )
+        map.connect('/app/{id}', controller=app_controller, action='show')
+        map.connect('/app', controller=app_controller, action='index')
+
+        idea_controller = 'ckanext.community.controllers.idea:IdeaController'
+        map.redirect("/ideas", "/idea")
+        map.redirect("/ideas/{url:.*}", "/idea/{url}")
+        map.connect('/idea/{action}', controller=idea_controller,
+        requirements=dict(action='|'.join([
+                        'create',
+                        'new',
+                        'update',
+                        'edit',
+                        'delete',
+                        'show',
+                        ]))
+                    )
+        map.connect('/idea/{id}', controller=idea_controller, action='show')
+        map.connect('/idea', controller=idea_controller, action='index')
         
         map.connect('app_api', '/api/2/util/apps/{action}',
             conditions=dict(method=['GET']),

@@ -15,7 +15,7 @@
     <div id="content-header">
     <h1 class="title">${c.idea.get('title')}</h1>
         
-    <form py:if="c.auth_for_update" method="get" action="${h.url_for(controller='ideas', id='edit', action=c.idea.get('name'))}">
+    <form py:if="c.auth_for_update" method="get" action="${h.url_for(id='edit', action=c.idea.get('name'))}">
     <input type="submit" value="Edit" />
     </form>
     
