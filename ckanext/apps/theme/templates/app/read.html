@@ -45,6 +45,18 @@
               href="${c.app.developer_url}">${c.app.developer}</a></span>
           <span py:if="not c.app.developer_url">${c.app.developer}</span>
         </li>
+        <li py:if="c.app.api_url">
+          <h3>API</h3>
+          <span><a href="${c.app.api_url}">${c.app.api_url}</a></span>
+        </li>
+        <li py:if="c.app.code_url">
+          <h3>Source Code</h3>
+          <span><a href="${c.app.code_url}">${c.app.code_url}</a></span>
+        </li>
+        <li py:if="c.app.license">
+          <h3>License</h3>
+          <span>${c.app.license}</span>
+        </li>
         <li py:if="c.app.tags">
           <h3>Tags</h3>
           <span py:for="app_tag in c.app.tags">

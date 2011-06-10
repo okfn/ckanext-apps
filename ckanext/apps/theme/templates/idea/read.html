@@ -3,71 +3,57 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   py:strip="">
 
-  <py:def function="page_title">${c.idea.get('title')}</py:def>
+  <py:def function="page_title">${c.idea.title}</py:def>
+  <py:def function="page_heading">${c.idea.title}</py:def>
 
   <py:def function="optional_head">
-    <link type="text/css" rel="stylesheet" media="all" href="/ckanext/community/style.css" />
-    <script type="text/javascript" src="/ckanext/community/script.js"></script> 
+    <link type="text/css" rel="stylesheet" media="all" href="/css/apps.css" />
+    <script type="text/javascript" src="/js/apps.js"></script> 
   </py:def>
-  
-<div py:match="content" class="community-content">
-    
-    <div id="content-header">
-    <h1 class="title">${c.idea.get('title')}</h1>
-        
-    <form py:if="c.auth_for_update" method="get" action="${h.url_for(id='edit', action=c.idea.get('name'))}">
-    <input type="submit" value="Edit" />
-    </form>
-    
-    <form py:if="c.auth_for_delete" method="post" action="">
-    <input type="hidden" name="_method" value="DELETE" />
-    <input type="submit" value="Delete" onClick="return confirmDelete()" />
-    </form>
-    
-    </div>
-                                                                                        
-    <table>
-    	<tbody>
-    		<tr>
-    			<th>Overview</th>
-    			<td>
-    			<div>
-    			<p>${c.idea.description}</p>
-    			</div>
-    			</td>
-    		</tr>
 
-    		<tr>
-    			<th>Tags</th>
-    			<td>
-    			<div>
-    			    <ul>
-    			        <li py:for="tag in c.idea.tags">
-    			            ${h.link_to(tag.name, h.url_for(controller='tag', action='read', id=tag.name))}
-    			        </li>
-    			    </ul>
-    			</div>
-    			</td>
-    		</tr>
-    		<tr>
-    		    <th>Submitted By</th>
-    		    <td>${c.idea.get('submitter')}</td>
-    		</tr>
-    		<tr>
-    		    <th>Submitted</th>
-    		    <td>${c.idea.created}</td>
-    		</tr>
-    	</tbody>
-    </table>
+  <py:match path="minornavigation">
+    <py:if test="c.idea">
+    <ul class="tabbed">
+      <li>${h.subnav_link(c, h.icon('package') + _('View'), action='read', id=c.idea.name)}</li>
+      <li py:if="c.auth_for_update">
+        ${h.subnav_link(c, h.icon('package_edit') + _('Edit'), action='edit', id=c.idea.name)}
+      </li>
+      <li py:if="c.auth_for_delete">
+        ${h.subnav_link(c, h.icon('package_delete') + _('Delete'), action='delete', id=c.idea.name)}
+      </li>
+    </ul>
+    </py:if>
+  </py:match>
 
-  <p>
-    Page last updated:
-     <?python 
-        import datetime
-     ?>
-    ${datetime.datetime.now().strftime('%c')}
-  </p>
-</div>
+  <py:match path="primarysidebar">
+    <li class="widget-container boxed widget_text" py:if="not c.hide_welcome_message">
+      <h3>First time at ${g.site_title}?</h3>        
+      <p>
+          ${g.site_title} is a catalogue for data. ${h.subnav_link(c, _('Click here to find out more ...'), controller='home', action='about', id=None)}
+      </p>
+    </li>
 
-<xi:include href="../../layout.html" />
+    <li class="widget-container widget_text">
+      <ul class="property-list">
+        <li py:if="c.idea.submitter">
+          <h3>Submitted by</h3>
+          <span py:if="c.idea.submitter_url"><a
+              href="${c.idea.submitter_url}">${c.idea.submitter}</a></span>
+          <span py:if="not c.idea.submitter_url">${c.idea.submitter}</span>
+        </li>
+        <li py:if="c.idea.tags">
+          <h3>Tags</h3>
+          <span py:for="idea_tag in c.idea.tags">
+            <a href="/idea/tag/${idea_tag.tag.name}">${idea_tag.tag.name}</a>
+          </span>
+        </li>
+      </ul>
+      </li>
+  </py:match>
+
+  <div py:match="content" class="community-content">
+    ${h.literal(h.markdown(c.idea.description))}
+  </div>
+
+<xi:include href="../layout.html" />
 </html>

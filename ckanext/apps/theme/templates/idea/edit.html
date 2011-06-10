@@ -3,8 +3,8 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   py:strip="">
 
-    <py:def function="page_title">New - Idea</py:def>
-    <py:def function="page_heading">New idea</py:def>
+    <py:def function="page_title">Edit - ${c.idea.title}</py:def>
+    <py:def function="page_heading">Edit: ${c.idea.title}</py:def>
 
     <py:def function="body_class">hide-sidebar</py:def>
     <py:def function="optional_head">
@@ -13,10 +13,11 @@
     </py:def>
 
     <div py:match="content">
-      <div class="harvest-content">
-        ${h.literal(c.form)}
-      </div>
+        <div class="harvest-content">
+            ${h.literal(c.form)}
+        </div>
     </div>
     <xi:include href="../layout.html" />
     </html>
+
 

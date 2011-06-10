@@ -1,12 +1,14 @@
 import os
 from logging import getLogger
 
-from sqlalchemy import engine_from_config
+from genshi.input import HTML
+from genshi.filters import Transformer
 
 from ckan.plugins import implements, SingletonPlugin
-from ckan.plugins import IRoutes, IConfigurer, IConfigurable
+from ckan.plugins import IRoutes, IConfigurer, IConfigurable, IGenshiStreamFilter
 
 from ckanext.apps.model import setup
+from ckanext.apps.menu import MENU_LINKS
 
 log = getLogger(__name__)
 
@@ -15,6 +17,7 @@ class Apps(SingletonPlugin):
     implements(IRoutes, inherit=True)
     implements(IConfigurer, inherit=True)
     implements(IConfigurable, inherit=True)
+    implements(IGenshiStreamFilter, inherit=True)
 
     def before_map(self, map):
         app_controller = 'ckanext.apps.controllers.application:AppController'
@@ -53,4 +56,10 @@ class Apps(SingletonPlugin):
             config['extra_public_paths'] += ','+public_dir
         else:
             config['extra_public_paths'] = public_dir
+
+    def filter(self, stream):
+        stream = stream | Transformer('body//div[@id="mainmenu"]')\
+                .append(HTML(MENU_LINKS))
+        return stream
+
 

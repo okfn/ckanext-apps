@@ -4,46 +4,39 @@
   py:strip="">
 
   <py:def function="page_title">Ideas</py:def>
+  <py:def function="page_heading">
+    Ideas <py:if test="c.tag_name">for Tag: ${c.tag_name}</py:if>
+  </py:def>
 
   <py:def function="optional_head">
-    <link type="text/css" rel="stylesheet" media="all" href="/ckanext/community/style.css" />
+    <link type="text/css" rel="stylesheet" media="all" href="/css/apps.css" />
+    <style>#minornavigation { visibility: hidden; }</style>    
   </py:def>
   
-<div py:match="content" class="community-content">
-  <h3>
-      ${h.link_to('Share your idea', h.url_for(action='new'))}
-  </h3>
-  
-  <h1>Ideas</h1>
-  <table>
-  	<tbody>
-  	    <tr>
-  	        <th>Name</th>
-  	        <th>Description</th>
-  	    </tr>
-  	    
-  	    <py:for each="idea in c.ideas">
-  		<tr>
-  		    <td>
-  		        ${h.link_to(idea.get('name'), h.url_for(action=idea.get('name')))}
-  		    </td>
-  			<td>
-  			<div>
-  			<p>${idea.get('description')}</p>
-  			</div>
-  			</td>
-  		</tr>
-  		</py:for>
-  	</tbody>
-  </table>
-  <p>
-    Page last updated:
-     <?python 
-        import datetime
-     ?>
-    ${datetime.datetime.now().strftime('%c')}
-  </p>
-</div>
+  <py:match path="primarysidebar">
+    <li class="widget-container boxed widget_text">
+      <h3>Open Data Ideas</h3>
+      <p>
+        Open Data is not only about information, it is also about the 
+        creativity to bend this information into the right shape to give 
+        it purpose. This page is a way to share ideas for new and innovative 
+        uses of data.
+        <br/>
+        <p py:if="c.auth_for_create">
+          Have an idea?<br/>${h.link_to('Share your idea', h.url_for(action='new'))}
+        </p>
+      </p>
+    </li>
+  </py:match>
 
-<xi:include href="../../layout.html" />
+  <div py:match="content" class="community-content">
+    <div py:for="idea in c.ideas" class="span-7 app">
+      <h3>
+        ${h.link_to(idea.title, h.url_for(action='read', id=idea.name))}
+      </h3>
+      <p>${h.truncate(idea.description, length=180, whole_word=True)}</p>
+    </div>
+  </div>
+
+  <xi:include href="../layout.html" />
 </html>

@@ -123,6 +123,9 @@ def create_apps_tables():
         Column('developer', types.UnicodeText),
         Column('developer_url', types.UnicodeText),
         Column('submitter', types.UnicodeText),
+        Column('license', types.UnicodeText),
+        Column('code_url', types.UnicodeText),
+        Column('api_url', types.UnicodeText),
         Column('created', DateTime, default=datetime.now),
         Column('updated', DateTime, default=datetime.now, onupdate=datetime.now),
         )

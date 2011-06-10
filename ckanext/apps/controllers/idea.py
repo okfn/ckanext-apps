@@ -8,92 +8,80 @@ from ckan.model import System, Action
 from ckan.authz import Authorizer
 from ckan.lib.base import BaseController, c, g, request, h, \
                           response, session, render, config, abort
+from ckan.lib.navl.dictization_functions import DataError, validate
+from ckan.logic import ValidationError
 
-from ..model import Idea
-from ..model.meta import Session
-
-from ..dictization import idea_dict_from_form
-from ..dictization import idea_details
+from ckanext.apps.model import Idea
+from ckanext.apps.logic.idea import all_ideas, \
+    ideas_by_tag, delete_idea, create_idea, \
+    edit_idea
 
 class IdeaController(BaseController):
-    authorizer = Authorizer()
-    
+    authz = Authorizer()
+
     def index(self, format='html'):
-        c.ideas = idea_details()              
-        return render('ckanext/community/ideas.html')
-    
-    def create(self):
-        try:
-            auth_for_create = self.authorizer.am_authorized(c, Action.PACKAGE_CREATE, System())
-            if not auth_for_create:
-                abort(401, _('Unauthorized to create an idea'))
-            idea_dict = idea_dict_from_form(request.params)
-        except colander.Invalid, e:
-            c.errors = e.asdict()
-            c.params = request.params
-            return render('ckanext/community/ideas_new.html')
+        c.ideas = all_ideas()
+        c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
+        return render('idea/index.html')
 
-        idea = Idea(**idea_dict)
-        Session.add(idea)
-        Session.commit()
-        return h.redirect_to(h.url_for('idea', id=idea.name))
-        
-    def new(self, format='html'):
-        c.auth_for_create = self.authorizer.am_authorized(c, Action.PACKAGE_CREATE, System())
-        if not c.auth_for_create:
-            abort(401, _('Unauthorized to create an idea'))
+    def tag(self, tag):
+        c.tag_name = tag
+        c.ideas = ideas_by_tag(tag)
+        c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
+        return render('idea/index.html')
 
-        c.params = request.params
-        return render('ckanext/community/ideas_new.html')
-        
-    def update(self, id):
-        c.auth_for_update = self.authorizer.am_authorized(c, Action.CHANGE_STATE, System())
-        if not c.auth_for_update:
-            abort(401, _('Unauthorized to edit idea'))
-        try:
-            idea_dict = idea_dict_from_form(request.params)
-            idea = Session.query(Idea).filter_by(name=id).one()
-            idea.update(**idea_dict)
-            Session.commit()
-        except colander.Invalid, e:
-            c.errors = e.asdict()
-            c.params = dict(request.params)
-            c.params['name'] = id
-            return render('ckanext/community/ideas_new.html')
-        except orm.exc.NoResultFound, e:
-            abort(404)
-        return h.redirect_to(h.url_for('idea', id=idea.name))
-        
-        
-    def delete(self, id):
-        c.auth_for_delete = self.authorizer.am_authorized(c, Action.PURGE, System())
-        if not c.auth_for_delete:
-            abort(401, _('Unauthorized to delete idea'))
-        try:
-            idea = Session.query(Idea).filter_by(name=id).one()
-            Session.delete(idea)
-            Session.commit()
-        except orm.exc.NoResultFound, e:
-            abort(404)
-        return h.redirect_to(h.url_for('ideas'))
- 
-    def show(self, id, format='html'):
-        c.auth_for_update = self.authorizer.am_authorized(c, Action.CHANGE_STATE, System())
-        c.auth_for_delete = self.authorizer.am_authorized(c, Action.PURGE, System())
-        idea_name = id
-        c.idea = idea_details(idea_name)
+    def new(self, data={}, errors={}, error_summary={}):
+        if not self.authz.am_authorized(c, Action.PACKAGE_CREATE, System()):
+            abort(401, _('Unauthorized to create an application'))
+        if request.method == 'POST' and not errors:
+            try:
+                data_dict = dict(request.params)
+                idea = create_idea(data_dict)
+                h.redirect_to(action='read', id=idea.name)
+            except ValidationError, e:
+                errors = e.error_dict
+                error_summary = e.error_summary
+                return self.new(data_dict, errors, error_summary)
+        c.form = render('idea/form.html', extra_vars={'data': data,
+                                                      'errors': errors,
+                                                      'error_summary': error_summary})
+        return render('idea/new.html')
+
+    def read(self, id):
+        c.auth_for_update = self.authz.am_authorized(c, Action.CHANGE_STATE, System())
+        c.auth_for_delete = self.authz.am_authorized(c, Action.PURGE, System())
+        c.idea = Idea.by_name(id)
         if not c.idea:
             abort(404)
-        return render('ckanext/community/ideas_show.html')
-            
-    def edit(self, id, format='html'):
+        return render('idea/read.html')
+
+    def delete(self, id):
+        if not self.authz.am_authorized(c, Action.PURGE, System()):
+            abort(401, _('Unauthorized to delete idea'))
+        delete_idea(id)
+        return h.redirect_to(h.url_for('ideas'))
+
+    def edit(self, id, data={}, errors={}, error_summary={}):
         c.auth_for_update = self.authorizer.am_authorized(c, Action.CHANGE_STATE, System())
         if not c.auth_for_update:
-            abort(401, _('Unauthorized to edit idea'))
-            
-        idea_name = id
-        c.params = idea_details(idea_name)
-        if not c.params:
+            abort(401, _('Unauthorized to edit application'))
+        c.idea = Idea.by_name(id)
+        if c.idea is None:
             abort(404)
-        return render('ckanext/community/ideas_new.html')
+        data = c.idea.as_dict()
+        data['tags'] = [t.tag.name for t in c.idea.tags]
+        if request.method == 'POST' and not errors:
+            try:
+                data_dict = dict(request.params)
+                idea = edit_idea(c.idea, data_dict)
+                h.redirect_to(action='read', id=idea.name)
+            except ValidationError, e:
+                errors = e.error_dict
+                error_summary = e.error_summary
+                return self.edit(data_dict, errors, error_summary)
+        c.form = render('idea/form.html', extra_vars={'data': data,
+                                                      'errors': errors,
+                                                      'error_summary': error_summary})
+        return render('idea/edit.html')
+
 

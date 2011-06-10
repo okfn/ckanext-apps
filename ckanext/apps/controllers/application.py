@@ -12,19 +12,22 @@ from ckan.lib.navl.dictization_functions import DataError, validate
 from ckan.logic import ValidationError
 
 from ckanext.apps.model import Application
-from ckanext.apps.logic import all_applications, applications_by_tag, \
-    delete_application, create_application, edit_application
+from ckanext.apps.logic.application import all_applications, \
+    applications_by_tag, delete_application, create_application, \
+    edit_application
 
 class AppController(BaseController):
     authz = Authorizer()
 
     def index(self, format='html'):
         c.apps = all_applications()
+        c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
         return render('app/index.html')
 
     def tag(self, tag):
         c.tag_name = tag
         c.apps = applications_by_tag(tag)
+        c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
         return render('app/index.html')
 
     def new(self, data={}, errors={}, error_summary={}):

@@ -34,6 +34,11 @@
         <dd><input id="developer_url" name="developer_url" size="80" type="text" value="${data.get('developer_url', '')}" /></dd>
         <dd class="field_error" py:if="errors.get('developer_url', '')">${errors.get('developer_url', '')}</dd>
         <dd class="instructions basic">Home page of the developer.</dd>
+        
+        <dt><label class="field_req" for="license">License</label></dt>
+        <dd><input id="license" name="license" size="80" type="text" value="${data.get('license', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('license', '')">${errors.get('license', '')}</dd>
+        <dd class="instructions basic">License (e.g. 'GPLv3' or 'commercial').</dd>
 
         <dt><label class="field_opt" for="description">Description</label></dt>
         <dd><textarea id="description" name="description" cols="30" rows="5" style="height:75px">${data.get('description', '')}</textarea></dd>
@@ -43,6 +48,16 @@
         <dd><input id="submitter" name="submitter" size="80" type="text" value="${data.get('submitter', '')}" /></dd>
         <dd class="field_error" py:if="errors.get('submitter', '')">${errors.get('submitter', '')}</dd>
         <dd class="instructions basic">Submitter (if different from developer).</dd>
+        
+        <dt><label class="field_req" for="code_url">Source Code URL</label></dt>
+        <dd><input id="code_url" name="code_url" size="80" type="text" value="${data.get('code_url', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('code_url', '')">${errors.get('code_url', '')}</dd>
+        <dd class="instructions basic">Link to the source code (if available).</dd>
+        
+        <dt><label class="field_req" for="api_url">API URL</label></dt>
+        <dd><input id="api_url" name="api_url" size="80" type="text" value="${data.get('api_url', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('api_url', '')">${errors.get('api_url', '')}</dd>
+        <dd class="instructions basic">Link to API documentation (if available).</dd>
 
         <dt><label class="field_req" for="tags">Tags *</label></dt>
         <dd><input id="tags" name="tags" size="80" type="text" value="${' '.join(data.get('tags', []))}" /></dd>

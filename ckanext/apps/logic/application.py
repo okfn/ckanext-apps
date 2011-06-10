@@ -7,7 +7,6 @@ from ckan.model import Session, Tag
 
 from ckanext.apps.schema import application_schema
 from ckanext.apps.model import Application, ApplicationImage, ApplicationTag
-from ckanext.apps.model import Idea, IdeaTag
 
 def all_applications():
     return Session.query(Application)
@@ -39,7 +38,11 @@ def create_application(data_dict):
             submitter=data.get('submitter'),
             developer=data.get('developer'),
             developer_url=data.get('developer_url'),
+            license=data.get('license'),
+            code_url=data.get('code_url'),
+            api_url=data.get('api_url'),
         )
+
     for tag in data.get('tags', '').split(' '):
         application.add_tag_by_name(tag)
     application.save()
@@ -57,6 +60,9 @@ def edit_application(application, data_dict):
     application.submitter = data.get('submitter')
     application.developer = data.get('developer')
     application.developer_url = data.get('developer_url')
+    application.license = data.get('license')
+    application.code_url = data.get('code_url')
+    application.api_url = data.get('api_url')
     for tag in data.get('tags', '').split(' '):
         application.add_tag_by_name(tag)
     application.save()
