@@ -1,0 +1,63 @@
+<form id="source-new" class="ckan" method="post"
+  py:attrs="{'class':'has-errors'} if errors else {}"
+  xmlns:i18n="http://genshi.edgewall.org/i18n"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <div class="error-explanation" py:if="error_summary">
+    <h2>Errors in form</h2>
+    <p>The form contains invalid entries:</p>
+    <ul>
+      <li py:for="key, error in error_summary.items()">${"%s: %s" % (key, error)}</li>
+    </ul>
+  </div>
+
+  <fieldset>
+    <legend>Details</legend>
+      <dl>
+        <dt><label class="field_req" for="title">Title *</label></dt>
+        <dd><input id="title" name="title" size="80" type="text" value="${data.get('title', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('title', '')">${errors.get('title', '')}</dd>
+        <dd class="instructions basic">A short title for this application.</dd>
+
+        <dt><label class="field_req" for="url">URL *</label></dt>
+        <dd><input id="url" name="url" size="80" type="text" value="${data.get('url', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('url', '')">${errors.get('url', '')}</dd>
+        <dd class="instructions basic">Link to a live version of this application.</dd>
+
+        <dt><label class="field_req" for="developer">Developer *</label></dt>
+        <dd><input id="developer" name="developer" size="80" type="text" value="${data.get('developer', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('developer', '')">${errors.get('developer', '')}</dd>
+        <dd class="instructions basic">Group or person that developed the application.</dd>
+        
+        <dt><label class="field_req" for="developer_url">Home page *</label></dt>
+        <dd><input id="developer_url" name="developer_url" size="80" type="text" value="${data.get('developer_url', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('developer_url', '')">${errors.get('developer_url', '')}</dd>
+        <dd class="instructions basic">Home page of the developer.</dd>
+
+        <dt><label class="field_opt" for="description">Description</label></dt>
+        <dd><textarea id="description" name="description" cols="30" rows="5" style="height:75px">${data.get('description', '')}</textarea></dd>
+        <dd class="instructions basic">Provide a short description of the application.</dd>
+        
+        <dt><label class="field_req" for="submitter">Submitter</label></dt>
+        <dd><input id="submitter" name="submitter" size="80" type="text" value="${data.get('submitter', '')}" /></dd>
+        <dd class="field_error" py:if="errors.get('submitter', '')">${errors.get('submitter', '')}</dd>
+        <dd class="instructions basic">Submitter (if different from developer).</dd>
+
+        <dt><label class="field_req" for="tags">Tags *</label></dt>
+        <dd><input id="tags" name="tags" size="80" type="text" value="${' '.join(data.get('tags', []))}" /></dd>
+        <dd class="field_error" py:if="errors.get('tags', '')">${errors.get('tags_', '')}</dd>
+        <dd class="instructions basic">Space-separated keyword describing the application.</dd>
+
+        <dt><label class="field_req" for="featured">Featured</label></dt>
+        <dd>
+          <input py:if="data.get('featured')" id="featured" name="featured" size="80" type="checkbox" checked="checked" />
+          <input py:if="not data.get('featured')" id="featured" name="featured" size="80" type="checkbox" />
+        </dd>
+        <dd class="field_error" py:if="errors.get('featured', '')">${errors.get('featured', '')}</dd>
+        <dd class="instructions basic">Is this application to be featured on the home page.</dd>
+      </dl>
+  </fieldset>
+  <input id="save" name="save" value="Save" type="submit" /> or <a href="/apps">Return to the application list</a>
+</form>
+

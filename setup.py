@@ -4,7 +4,7 @@ import sys, os
 version = '0.1'
 
 setup(
-	name='ckanext-community',
+	name='ckanext-apps',
 	version=version,
 	description="Apps and Ideas submissions and browsing.",
 	long_description="""\
@@ -16,7 +16,7 @@ setup(
 	url='http://',
 	license='mit',
 	packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-	namespace_packages=['ckanext', 'ckanext.community'],
+	namespace_packages=['ckanext', 'ckanext.apps'],
 	include_package_data=True,
 	zip_safe=False,
 	install_requires=[
@@ -27,7 +27,6 @@ setup(
 	entry_points=\
 	"""
     [ckan.plugins]
-	# Add plugins here, eg
-	community=ckanext.community.plugin:Community
+	apps=ckanext.apps.plugin:Apps
 	""",
 )
