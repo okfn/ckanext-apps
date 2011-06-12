@@ -18,6 +18,11 @@ def applications_by_tag(tag_name):
     q = q.filter(Tag.name==tag_name)
     return q
 
+def featured_applications():
+    q = Session.query(Application)
+    q = q.filter(Application.featured==True)
+    return q
+
 def error_summary(errors):
     error_summary = {}
     for key, error in errors.iteritems():

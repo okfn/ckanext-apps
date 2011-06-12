@@ -15,24 +15,24 @@
   <py:match path="minornavigation">
     <py:if test="c.app">
     <ul class="tabbed">
-      <li>${h.subnav_link(c, h.icon('package') + _('View'), action='read', id=c.app.name)}</li>
+      <li>${h.subnav_link(c, h.icon('application') + _('View'), action='read', id=c.app.name)}</li>
       <li py:if="c.auth_for_update">
-        ${h.subnav_link(c, h.icon('package_edit') + _('Edit'), action='edit', id=c.app.name)}
+        ${h.subnav_link(c, h.icon('application_edit') + _('Edit'), action='edit', id=c.app.name)}
       </li>
       <li py:if="c.auth_for_delete">
-        ${h.subnav_link(c, h.icon('package_delete') + _('Delete'), action='delete', id=c.app.name)}
+        ${h.subnav_link(c, h.icon('application_delete') + _('Delete'), action='delete', id=c.app.name)}
       </li>
     </ul>
     </py:if>
   </py:match>
 
   <py:match path="primarysidebar">
-    <li class="widget-container boxed widget_text" py:if="not c.hide_welcome_message">
+    <!--li class="widget-container boxed widget_text" py:if="not c.hide_welcome_message">
       <h3>First time at ${g.site_title}?</h3>        
       <p>
           ${g.site_title} is a catalogue for data. ${h.subnav_link(c, _('Click here to find out more ...'), controller='home', action='about', id=None)}
       </p>
-    </li>
+    </li-->
 
     <li class="widget-container widget_text">
       <ul class="property-list">
@@ -74,7 +74,7 @@
 
   <div py:match="content" class="community-content">
     ${h.literal(h.markdown(c.app.description))}
-    <div class="app-gallery">
+    <div class="app-gallery" py:if="len(c.app.images)">
       <py:for each="image in c.app.images">
         <a href="/app/image/${image.id}@800x600"><img src="/app/image/${image.id}@240x180" class="screenshot" /></a>
       </py:for>

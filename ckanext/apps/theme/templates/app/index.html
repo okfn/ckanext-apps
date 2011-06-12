@@ -3,6 +3,8 @@
   xmlns:xi="http://www.w3.org/2001/XInclude"
   py:strip="">
 
+  <xi:include href="../_appsutil.html" />
+
   <py:def function="page_title">Applications</py:def>
   <py:def function="page_heading">
   Applications <py:if test="c.tag_name">for Tag: ${c.tag_name}</py:if>
@@ -15,7 +17,6 @@
   
   <py:match path="primarysidebar">
     <li class="widget-container boxed widget_text">
-      <h3>Open Data Applications</h3>
       <p>
         Applications based on open data can help answer lots of questions -
         from everyday matters to affairs of state.
@@ -28,22 +29,7 @@
   </py:match>
 
   <div py:match="content" class="community-content">
-    <div py:for="app in c.apps" class="span-7 app">
-      <py:if test="len(app.images)">
-        <a href="${h.url_for(action='read', id=app.name)}">
-          <img src="/app/image/${app.images[0].id}@240x165" class="screenshot" />
-        </a>
-      </py:if>
-      <py:if test="not len(app.images)">
-        <a href="${h.url_for(action='read', id=app.name)}">
-          <img src="/img/app_thumb_default.png" class="screenshot" />
-        </a>
-      </py:if>
-      <h3>
-        ${h.link_to(app.title, h.url_for(action='read', id=app.name))}
-      </h3>
-      <p>${h.truncate(app.description, length=180, whole_word=True)}</p>
-    </div>
+    ${apps_list(c.apps)}
   </div>
 
   <xi:include href="../layout.html" />

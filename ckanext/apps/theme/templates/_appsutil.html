@@ -1,0 +1,39 @@
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:i18n="http://genshi.edgewall.org/i18n"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  py:strip=""
+  >
+
+  <span py:def="apps_list(apps)"
+    py:with="ctl = 'ckanext.apps.controllers.application:AppController'">
+    <div py:for="app in apps" class="span-7 app">
+      <py:if test="len(app.images)">
+        <a href="${h.url_for(controller=ctl, action='read', id=app.name)}">
+          <img src="/app/image/${app.images[0].id}@240x165" class="screenshot" />
+        </a>
+      </py:if>
+      <py:if test="not len(app.images)">
+        <a href="${h.url_for(controller=ctl, action='read', id=app.name)}">
+          <img src="/img/app_thumb_default.png" class="screenshot" />
+        </a>
+      </py:if>
+      <h3>
+        ${h.link_to(app.title, h.url_for(controller=ctl, action='read', id=app.name))}
+      </h3>
+      <p>${h.truncate(app.description, length=180, whole_word=True)}</p>
+    </div>
+  </span>
+
+  <span py:def="ideas_list(ideas)"
+    py:with="ctl = 'ckanext.apps.controllers.idea:IdeaController'">
+    <div py:for="idea in c.ideas" class="span-7 app">
+      <h3>
+        ${h.link_to(idea.title, h.url_for(controller=ctl, action='read', id=idea.name))}
+      </h3>
+      <p>${h.truncate(idea.description, length=180, whole_word=True)}</p>
+    </div>
+  </span>
+</html>
+

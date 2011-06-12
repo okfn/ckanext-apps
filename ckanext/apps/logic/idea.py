@@ -18,6 +18,11 @@ def ideas_by_tag(tag_name):
     q = q.filter(Tag.name==tag_name)
     return q
 
+def featured_ideas():
+    q = Session.query(Idea)
+    q = q.filter(Idea.featured==True)
+    return q
+
 def error_summary(errors):
     error_summary = {}
     for key, error in errors.iteritems():

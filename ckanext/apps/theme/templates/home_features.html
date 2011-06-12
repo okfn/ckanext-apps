@@ -1,0 +1,20 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+  xmlns:i18n="http://genshi.edgewall.org/i18n"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  py:strip="">
+  <xi:include href="_appsutil.html" />
+  <link rel="stylesheet" type="text/css" href="/css/apps.css" />
+  <style>
+    .spaced-heading {
+      margin-top: 1em;
+    }
+
+  </style>
+  <div class="clearfix"></div>
+  <h3 class="spaced-heading">Applications</h3>
+  ${apps_list(featured_apps)}
+  <div class="clearfix"></div>
+  <h3 class="spaced-heading">Ideas</h3>
+  ${ideas_list(featured_ideas)}
+</html>
+

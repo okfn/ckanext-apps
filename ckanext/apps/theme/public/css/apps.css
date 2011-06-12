@@ -2,6 +2,7 @@
 .app {
   margin-right: 2em;
   margin-bottom: 1em;
+  min-width: 290px;
 }
 
 .app h3 {

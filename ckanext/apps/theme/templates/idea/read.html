@@ -14,24 +14,24 @@
   <py:match path="minornavigation">
     <py:if test="c.idea">
     <ul class="tabbed">
-      <li>${h.subnav_link(c, h.icon('package') + _('View'), action='read', id=c.idea.name)}</li>
+      <li>${h.subnav_link(c, h.icon('lightbulb') + _('View'), action='read', id=c.idea.name)}</li>
       <li py:if="c.auth_for_update">
-        ${h.subnav_link(c, h.icon('package_edit') + _('Edit'), action='edit', id=c.idea.name)}
+        ${h.subnav_link(c, h.icon('lightbulb_add') + _('Edit'), action='edit', id=c.idea.name)}
       </li>
       <li py:if="c.auth_for_delete">
-        ${h.subnav_link(c, h.icon('package_delete') + _('Delete'), action='delete', id=c.idea.name)}
+        ${h.subnav_link(c, h.icon('lightbulb_delete') + _('Delete'), action='delete', id=c.idea.name)}
       </li>
     </ul>
     </py:if>
   </py:match>
 
   <py:match path="primarysidebar">
-    <li class="widget-container boxed widget_text" py:if="not c.hide_welcome_message">
+    <!--li class="widget-container boxed widget_text" py:if="not c.hide_welcome_message">
       <h3>First time at ${g.site_title}?</h3>        
       <p>
           ${g.site_title} is a catalogue for data. ${h.subnav_link(c, _('Click here to find out more ...'), controller='home', action='about', id=None)}
       </p>
-    </li>
+    </li-->
 
     <li class="widget-container widget_text">
       <ul class="property-list">

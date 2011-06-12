@@ -6,8 +6,12 @@ from genshi.filters import Transformer
 
 from ckan.plugins import implements, SingletonPlugin
 from ckan.plugins import IRoutes, IConfigurer, IConfigurable, IGenshiStreamFilter
+#from ckan.lib.base import render
+from pylons.templating import render_genshi as render_orig
 
 from ckanext.apps.model import setup
+from ckanext.apps.logic.application import featured_applications
+from ckanext.apps.logic.idea import featured_ideas
 from ckanext.apps.menu import MENU_LINKS
 
 log = getLogger(__name__)
@@ -64,6 +68,12 @@ class Apps(SingletonPlugin):
     def filter(self, stream):
         stream = stream | Transformer('body//div[@id="mainmenu"]')\
                 .append(HTML(MENU_LINKS))
+        html = render_orig('home_features.html', extra_vars={
+            'featured_apps': featured_applications(),
+            'featured_ideas': featured_ideas()})
+        stream = stream | Transformer('body//*[@id="homepage"]')\
+            .append(HTML(html))
         return stream
+
 
 
