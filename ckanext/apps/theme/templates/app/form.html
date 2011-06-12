@@ -2,6 +2,7 @@
   py:attrs="{'class':'has-errors'} if errors else {}"
   xmlns:i18n="http://genshi.edgewall.org/i18n"
   xmlns:py="http://genshi.edgewall.org/"
+  enctype="multipart/form-data"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <div class="error-explanation" py:if="error_summary">
@@ -63,6 +64,15 @@
         <dd><input id="tags" name="tags" size="80" type="text" value="${' '.join(data.get('tags', []))}" /></dd>
         <dd class="field_error" py:if="errors.get('tags', '')">${errors.get('tags_', '')}</dd>
         <dd class="instructions basic">Space-separated keyword describing the application.</dd>
+        
+        <dt><label class="field_req" for="image">Screenshot</label></dt>
+        <dd py:for="image in data.get('images', [])">
+          <input type="checkbox" value="${image.id}" name="keep_images"
+            checked="checked" /> ${image.name}
+        </dd>
+        <dd><input id="image" name="image" size="80" type="file" /></dd>
+        <dd class="field_error" py:if="errors.get('image', '')">${errors.get('image_', '')}</dd>
+        <dd class="instructions basic">An image of your application.</dd>
 
         <dt><label class="field_req" for="featured">Featured</label></dt>
         <dd>

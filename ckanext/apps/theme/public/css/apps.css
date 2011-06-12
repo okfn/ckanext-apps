@@ -1,5 +1,35 @@
 
+.app {
+  margin-right: 2em;
+  margin-bottom: 1em;
+}
+
+.app h3 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
 .app h3 a {
   text-decoration: none;
   font-weight: bold;
+}
+
+.app .screenshot {
+	width: 240px;
+	height: 165px;
+	position:relative;
+    -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.4);
+}
+
+.app-gallery {
+  padding: 1em;
+  background-color: #E5ECF9;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.app-gallery img {
+  margin-right: 2em;
+  -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.4);
 }

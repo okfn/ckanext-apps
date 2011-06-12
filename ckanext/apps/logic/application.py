@@ -24,7 +24,9 @@ def error_summary(errors):
         error_summary[prettify(key)] = error[0]
     return error_summary
 
-def create_application(data_dict):
+def create_application(data_dict, image):
+    if 'image' in data_dict:
+        del data_dict['image']
     data, errors = validate(data_dict, application_schema())
     if errors:
         raise ValidationError(errors, error_summary(errors))
@@ -45,10 +47,17 @@ def create_application(data_dict):
 
     for tag in data.get('tags', '').split(' '):
         application.add_tag_by_name(tag)
+
+    if image and image.filename and image.file:
+        image = ApplicationImage(name=image.filename, 
+            data=image.file.read())
+        application.images = [image]
     application.save()
     return application
 
-def edit_application(application, data_dict):
+def edit_application(application, data_dict, image, keep_images):
+    if 'image' in data_dict:
+        del data_dict['image']
     data, errors = validate(data_dict, application_schema())
     if errors:
         raise ValidationError(errors, error_summary(errors))
@@ -63,8 +72,20 @@ def edit_application(application, data_dict):
     application.license = data.get('license')
     application.code_url = data.get('code_url')
     application.api_url = data.get('api_url')
+
     for tag in data.get('tags', '').split(' '):
         application.add_tag_by_name(tag)
+
+    for _image in application.images:
+        if _image.id not in keep_images:
+            _image.delete()
+
+    if image is not None and hasattr(image, 'file'):
+        image = ApplicationImage(name=image.filename, 
+            data=image.file.read(),
+            application=application)
+        image.save()
+
     application.save()
     return application
 

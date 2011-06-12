@@ -27,6 +27,10 @@ class Apps(SingletonPlugin):
         map.connect('/app/new', controller=app_controller, action='new')
         map.connect('/app/tag/:tag', controller=app_controller, action='tag') 
         map.connect('/app/edit/:id', controller=app_controller, action='edit') 
+        map.connect('/app/image/{id}@{x}x{y}', controller=app_controller,
+                action='read_image') 
+        map.connect('/app/image/:id', controller=app_controller,
+                action='read_image') 
         map.connect('/app/delete/:id',controller=app_controller, action='delete')
         map.connect('app', '/app/:id', controller=app_controller, action='read')
 

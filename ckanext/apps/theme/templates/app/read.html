@@ -7,6 +7,7 @@
   <py:def function="page_heading">${c.app.title}</py:def>
 
   <py:def function="optional_head">
+    <link rel="stylesheet" type="text/css" href="/css/jquery.lightbox-0.5.css" media="screen" />
     <link type="text/css" rel="stylesheet" media="all" href="/css/apps.css" />
     <script type="text/javascript" src="/js/apps.js"></script> 
   </py:def>
@@ -73,7 +74,28 @@
 
   <div py:match="content" class="community-content">
     ${h.literal(h.markdown(c.app.description))}
+    <div class="app-gallery">
+      <py:for each="image in c.app.images">
+        <a href="/app/image/${image.id}@800x600"><img src="/app/image/${image.id}@240x180" class="screenshot" /></a>
+      </py:for>
+    </div>
   </div>
+
+  <py:def function="optional_footer">
+    <script type="text/javascript" src="/js/jquery.lightbox-0.5.min.js"></script>
+    <script>
+      $(function() {
+        $('.app-gallery a').lightBox({
+            imageLoading:			'/img/lightbox-ico-loading.gif',
+            imageBtnPrev:			'/img/lightbox-btn-prev.gif',			
+            imageBtnNext:			'/img/lightbox-btn-next.gif',				
+            imageBtnClose:			'/img/lightbox-btn-close.gif',			
+            imageBlank:				'/img/lightbox-blank.gif',
+          
+        });
+      });
+    </script>
+  </py:def>
 
 <xi:include href="../layout.html" />
 </html>

@@ -21,8 +21,7 @@ setup(
 	zip_safe=False,
 	install_requires=[
 		# -*- Extra requirements: -*-
-		'colander',
-		'sqlalchemy',
+        "PIL>=1.1.6",
 	],
 	entry_points=\
 	"""
