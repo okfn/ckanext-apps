@@ -29,8 +29,9 @@
   </py:match>
 
   <div py:match="content" class="community-content">
-    ${apps_list(c.apps)}
+    ${apps_list(c.page)}
   </div>
+  ${c.page.pager()}
 
   <xi:include href="../layout.html" />
 </html>

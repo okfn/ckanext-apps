@@ -1,11 +1,14 @@
-import sys
+import sys, rfc822
 import Image, ImageOps
+from hashlib import sha1
 from StringIO import StringIO
+from pylons.controllers.util import etag_cache
 from pylons.decorators.cache import beaker_cache
 from pylons.i18n import _
 
 from ckan.model import System, Action
 from ckan.authz import Authorizer
+from ckan.lib.helpers import Page
 from ckan.lib.base import BaseController, c, g, request, h, \
                           response, session, render, config, abort
 from ckan.lib.navl.dictization_functions import DataError, validate
@@ -19,16 +22,20 @@ from ckanext.apps.logic.application import all_applications, \
 class AppController(BaseController):
     authz = Authorizer()
 
-    def index(self, format='html'):
-        c.apps = all_applications()
+    def _render_index(self, apps):
         c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
+        c.page = Page(
+            collection=apps,
+            page=int(request.params.get('page', 1)),
+            items_per_page=10)
         return render('app/index.html')
+
+    def index(self):
+        return self._render_index(all_applications())
 
     def tag(self, tag):
         c.tag_name = tag
-        c.apps = applications_by_tag(tag)
-        c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
-        return render('app/index.html')
+        return self._render_index(applications_by_tag(tag))
 
     def new(self, data={}, errors={}, error_summary={}):
         if not self.authz.am_authorized(c, Action.PACKAGE_CREATE, System()):
@@ -58,6 +65,7 @@ class AppController(BaseController):
 
     @beaker_cache(expire=600, query_args=True)
     def read_image(self, id, x=None, y=None):
+        etag_cache(sha1(str(id)+str(x)+str(y)).hexdigest())
         image = ApplicationImage.by_id(id)
         handle = Image.open(StringIO(image.data))
         if not image:
@@ -71,6 +79,9 @@ class AppController(BaseController):
         except ValueError, e:
             pass
         handle.save(outfh, 'PNG')
+        response.pragma = None 
+        response.cache_control = 'public; max-age: 84600'
+        response.cache_expires(seconds=84600)
         return outfh.getvalue()
 
     def delete(self, id):

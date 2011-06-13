@@ -1,11 +1,9 @@
-import colander
-
-from sqlalchemy import orm
-
+from pylons.controllers.util import etag_cache
 from pylons.i18n import _
 
 from ckan.model import System, Action
 from ckan.authz import Authorizer
+from ckan.lib.helpers import Page
 from ckan.lib.base import BaseController, c, g, request, h, \
                           response, session, render, config, abort
 from ckan.lib.navl.dictization_functions import DataError, validate
@@ -18,17 +16,21 @@ from ckanext.apps.logic.idea import all_ideas, \
 
 class IdeaController(BaseController):
     authz = Authorizer()
-
-    def index(self, format='html'):
-        c.ideas = all_ideas()
+    
+    def _render_index(self, ideas):
         c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
+        c.page = Page(
+            collection=ideas,
+            page=int(request.params.get('page', 1)),
+            items_per_page=10)
         return render('idea/index.html')
+
+    def index(self):
+        return self._render_index(all_ideas())
 
     def tag(self, tag):
         c.tag_name = tag
-        c.ideas = ideas_by_tag(tag)
-        c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
-        return render('idea/index.html')
+        return self._render_index(ideas_by_tag(tag))
 
     def new(self, data={}, errors={}, error_summary={}):
         if not self.authz.am_authorized(c, Action.PACKAGE_CREATE, System()):

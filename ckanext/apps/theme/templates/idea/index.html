@@ -31,8 +31,9 @@
   </py:match>
 
   <div py:match="content" class="community-content">
-    ${ideas_list(c.ideas)}
+    ${ideas_list(c.page)}
   </div>
+  ${c.page.pager()}
 
   <xi:include href="../layout.html" />
 </html>
