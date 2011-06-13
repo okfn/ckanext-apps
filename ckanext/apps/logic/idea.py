@@ -42,8 +42,10 @@ def create_idea(data_dict):
             submitter=data.get('submitter'),
             submitter_url=data.get('submitter_url'),
         )
-    for tag in data.get('tags', '').split(' '):
-        idea.add_tag_by_name(tag)
+
+    tags = data.get('tags', '').split(' ')
+    idea.update_tags(tags)
+
     idea.save()
     return idea
 
@@ -57,8 +59,9 @@ def edit_idea(idea, data_dict):
     idea.featured = data.get('featured')
     idea.submitter = data.get('submitter')
     idea.submitter_url = data.get('submitter_url')
-    for tag in data.get('tags', '').split(' '):
-        idea.add_tag_by_name(tag)
+
+    tags = data.get('tags', '').split(' ')
+    idea.update_tags(tags)
     idea.save()
     return idea
 

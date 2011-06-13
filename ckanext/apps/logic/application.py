@@ -50,13 +50,14 @@ def create_application(data_dict, image):
             api_url=data.get('api_url'),
         )
 
-    for tag in data.get('tags', '').split(' '):
-        application.add_tag_by_name(tag)
+    tags = data.get('tags', '').split(' ')
+    application.update_tags(tags)
 
     if image and image.filename and image.file:
         image = ApplicationImage(name=image.filename, 
-            data=image.file.read())
-        application.images = [image]
+            data=image.file.read(),
+            application=application)
+        Session.add(image)
     application.save()
     return application
 
@@ -78,8 +79,8 @@ def edit_application(application, data_dict, image, keep_images):
     application.code_url = data.get('code_url')
     application.api_url = data.get('api_url')
 
-    for tag in data.get('tags', '').split(' '):
-        application.add_tag_by_name(tag)
+    tags = data.get('tags', '').split(' ')
+    application.update_tags(tags)
 
     for _image in application.images:
         if _image.id not in keep_images:

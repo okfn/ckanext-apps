@@ -66,13 +66,15 @@ class Apps(SingletonPlugin):
             config['extra_public_paths'] = public_dir
 
     def filter(self, stream):
+        from pylons import request
         stream = stream | Transformer('body//div[@id="mainmenu"]')\
                 .append(HTML(MENU_LINKS))
-        html = render_orig('home_features.html', extra_vars={
-            'featured_apps': featured_applications(),
-            'featured_ideas': featured_ideas()})
-        stream = stream | Transformer('body//*[@id="homepage"]')\
-            .append(HTML(html))
+        if len(request.environ.get('PATH_INFO')) < 2:
+            html = render_orig('home_features.html', extra_vars={
+                'featured_apps': featured_applications(),
+                'featured_ideas': featured_ideas()})
+            stream = stream | Transformer('body//*[@id="homepage"]')\
+                .append(HTML(html))
         return stream
 
 

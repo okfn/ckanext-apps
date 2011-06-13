@@ -25,16 +25,16 @@
         <dd class="field_error" py:if="errors.get('submitter', '')">${errors.get('submitter', '')}</dd>
         <dd class="instructions basic">Group or person that came up with the idea.</dd>
         
-        <dt><label class="field_req" for="submitter_url">Home page *</label></dt>
+        <dt><label class="field_req" for="submitter_url">Home page</label></dt>
         <dd><input id="submitter_url" name="submitter_url" size="80" type="text" value="${data.get('submitter_url', '')}" /></dd>
         <dd class="field_error" py:if="errors.get('submitter_url', '')">${errors.get('submitter_url', '')}</dd>
         <dd class="instructions basic">Home page of the submitter.</dd>
         
-        <dt><label class="field_opt" for="description">Description</label></dt>
+        <dt><label class="field_opt" for="description">Description *</label></dt>
         <dd><textarea id="description" name="description" cols="30" rows="5" style="height:75px">${data.get('description', '')}</textarea></dd>
         <dd class="instructions basic">Provide a short description of the idea.</dd>
         
-        <dt><label class="field_req" for="tags">Tags *</label></dt>
+        <dt><label class="field_req" for="tags">Tags</label></dt>
         <dd><input id="tags" name="tags" size="80" type="text" value="${' '.join(data.get('tags', []))}" /></dd>
         <dd class="field_error" py:if="errors.get('tags', '')">${errors.get('tags_', '')}</dd>
         <dd class="instructions basic">Space-separated keyword describing the idea.</dd>

@@ -62,12 +62,19 @@ class Application(AppsDomainObject):
     def generate_name(cls, title):
         return _generate_name(cls, title)
 
-    def add_tag_by_name(self, tagname, autoflush=True):
-        tag = Tag.by_name(tagname, autoflush=autoflush)
-        if not tag:
-            tag = Tag(name=tagname)
-        app_tag = ApplicationTag.by_tag(self, tag)
-        if not app_tag in self.tags:
+    def update_tags(self, tags):
+        tags = [t.strip(',').strip() for t in tags]
+        for app_tag in self.tags:
+            if app_tag.tag.name in tags:
+                tags.remove(app_tag.tag.name)
+            else: 
+                app_tag.delete()
+        for tag_name in tags:
+            tag = Tag.by_name(tag_name)
+            if not tag:
+                tag = Tag(name=tag_name)
+            app_tag = ApplicationTag(application=self, tag=tag)
+            app_tag.add()
             self.tags.append(app_tag)
 
 class ApplicationTag(AppsDomainObject):
@@ -88,12 +95,19 @@ class Idea(AppsDomainObject):
     def generate_name(cls, title):
         return _generate_name(cls, title)
 
-    def add_tag_by_name(self, tagname, autoflush=True):
-        tag = Tag.by_name(tagname, autoflush=autoflush)
-        if not tag:
-            tag = Tag(name=tagname)
-        idea_tag = IdeaTag.by_tag(self, tag)
-        if not idea_tag in self.tags:
+    def update_tags(self, tags):
+        tags = [t.strip(',').strip() for t in tags]
+        for idea_tag in self.tags:
+            if idea_tag.tag.name in tags:
+                tags.remove(idea_tag.tag.name)
+            else: 
+                idea_tag.delete()
+        for tag_name in tags:
+            tag = Tag.by_name(tag_name)
+            if not tag:
+                tag = Tag(name=tag_name)
+            idea_tag = IdeaTag(idea=self, tag=tag)
+            idea_tag.add()
             self.tags.append(idea_tag)
 
 class IdeaTag(AppsDomainObject):
