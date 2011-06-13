@@ -63,7 +63,6 @@ class AppController(BaseController):
             abort(404)
         return render('app/read.html')
 
-    @beaker_cache(expire=600, query_args=True)
     def read_image(self, id, x=None, y=None):
         etag_cache(sha1(str(id)+str(x)+str(y)).hexdigest())
         image = ApplicationImage.by_id(id)
