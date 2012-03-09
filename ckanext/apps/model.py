@@ -1,14 +1,19 @@
 import logging
 from datetime import datetime
 
+from sqlalchemy.engine.reflection import Inspector
+from sqlalchemy.orm import backref, relation
+
+
 from ckan.lib.munge import munge_title_to_name
-from ckan.model.meta import *
+from ckan import model
+from ckan.model import Session
+from ckan.model.meta import Table, Column,types,ForeignKey,DateTime
 from ckan.model.types import make_uuid
-from ckan.model.core import *
+from ckan.model.core import metadata, mapper
 from ckan.model.domain_object import DomainObject
 from ckan.model.tag import Tag, tag_table
 
-from sqlalchemy.orm import backref, relation
 log = logging.getLogger(__name__)
 
 __all__ = [
@@ -27,9 +32,41 @@ idea_table = None
 idea_tag_table = None
 
 def setup():
+
     if application_table is None:
-        create_apps_tables()
-    metadata.create_all()
+        define_apps_tables()
+        log.debug('Apps tables defined in memory')
+
+    if model.repo.are_tables_created():
+        if not application_table.exists():
+
+            # Create each table individually rather than
+            # using metadata.create_all()
+            application_table.create()
+            application_tag_table.create()
+            application_image_table.create()
+            idea_table.create()
+            idea_tag_table.create()
+
+            log.debug('Apps tables created')
+        else:
+            log.debug('Apps tables already exist')
+            from ckan.model.meta import engine
+            # Check if existing tables need to be updated
+            inspector = Inspector.from_engine(engine)
+            columns = inspector.get_columns('application_tag')
+            if not 'id' in [column['name'] for column in columns]:
+                log.debug('Apps tables need to be updated')
+                migrate_v2()
+
+
+    else:
+        log.debug('Apps table creation deferred')
+
+    #import pdb; pdb.set_trace()
+    #if application_table is None:
+        #create_apps_tables()
+    #metadata.create_all()
 
 def _generate_name(cls, title):
     name = munge_title_to_name(title).replace('_', '-')
@@ -45,7 +82,7 @@ def _generate_name(cls, title):
         while counter < 101:
             if name+str(counter) not in taken:
                 return name+str(counter)
-            counter+=1 
+            counter+=1
 
 class AppsDomainObject(DomainObject):
 
@@ -67,7 +104,7 @@ class Application(AppsDomainObject):
         for app_tag in self.tags:
             if app_tag.tag.name in tags:
                 tags.remove(app_tag.tag.name)
-            else: 
+            else:
                 app_tag.delete()
         for tag_name in tags:
             tag = Tag.by_name(tag_name)
@@ -76,6 +113,17 @@ class Application(AppsDomainObject):
             app_tag = ApplicationTag(application=self, tag=tag)
             app_tag.add()
             self.tags.append(app_tag)
+
+    @property
+    def tags(self):
+        app_tags = Session.query(ApplicationTag) \
+               .join(Application) \
+               .filter(Application.id==self.id) \
+               .all()
+
+        return app_tags
+
+
 
 class ApplicationTag(AppsDomainObject):
 
@@ -100,7 +148,7 @@ class Idea(AppsDomainObject):
         for idea_tag in self.tags:
             if idea_tag.tag.name in tags:
                 tags.remove(idea_tag.tag.name)
-            else: 
+            else:
                 idea_tag.delete()
         for tag_name in tags:
             tag = Tag.by_name(tag_name)
@@ -109,6 +157,15 @@ class Idea(AppsDomainObject):
             idea_tag = IdeaTag(idea=self, tag=tag)
             idea_tag.add()
             self.tags.append(idea_tag)
+
+    @property
+    def tags(self):
+        idea_tags = Session.query(IdeaTag) \
+               .join(Idea) \
+               .filter(Idea.id==self.id) \
+               .all()
+
+        return idea_tags
 
 class IdeaTag(AppsDomainObject):
 
@@ -120,7 +177,7 @@ class IdeaTag(AppsDomainObject):
         return match or cls(idea=idea, tag=tag)
 
 
-def create_apps_tables():
+def define_apps_tables():
     global application_table
     global application_tag_table
     global application_image_table
@@ -143,7 +200,7 @@ def create_apps_tables():
         Column('created', DateTime, default=datetime.now),
         Column('updated', DateTime, default=datetime.now, onupdate=datetime.now),
         )
-    
+
     application_image_table = Table('application_image', metadata,
         Column('application_id', types.UnicodeText,
             ForeignKey('application.id')),
@@ -154,10 +211,11 @@ def create_apps_tables():
         )
 
     application_tag_table = Table('application_tag', metadata,
+        Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
         Column('application_id', types.UnicodeText,
             ForeignKey('application.id')),
         Column('tag_id', types.UnicodeText,
-            ForeignKey(tag_table.c.id))
+            ForeignKey('tag.id'))
         )
 
     idea_table = Table('idea', metadata,
@@ -173,52 +231,67 @@ def create_apps_tables():
         )
 
     idea_tag_table = Table('idea_tag', metadata,
+        Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
         Column('idea_id', types.UnicodeText, ForeignKey('idea.id')),
-        Column('tag_id', types.UnicodeText, ForeignKey(tag_table.c.id))
+        Column('tag_id', types.UnicodeText, ForeignKey('tag.id'))
         )
 
-    mapper(Application, application_table, properties={
-            'tags':relation(ApplicationTag, secondary=application_tag_table, viewonly=True,
-                cascade='all, delete',
-                primaryjoin=application_table.c.id==application_tag_table.c.application_id,
-                secondaryjoin=tag_table.c.id==application_tag_table.c.tag_id,
-            )
-            }
-        )
+    mapper(Application, application_table)
 
     mapper(ApplicationTag, application_tag_table, properties={
             'tag':relation(Tag),
             'application':relation(Application),
-            },
-            primary_key=[
-                application_tag_table.c.tag_id,
-                application_tag_table.c.application_id
-            ]
+            }
         )
 
     mapper(ApplicationImage, application_image_table, properties={
             'application': relation(Application,
-                primaryjoin=application_table.c.id==application_image_table.c.application_id,
+                primaryjoin=(application_table.c.id==application_image_table.c.application_id),
                 backref=backref("images", lazy=True)),
             },
         )
 
-    mapper(Idea, idea_table, properties={
-            'tags':relation(IdeaTag, secondary=idea_tag_table, viewonly=True,
-                cascade='all, delete',
-                primaryjoin=idea_table.c.id==idea_tag_table.c.idea_id,
-                secondaryjoin=tag_table.c.id==idea_tag_table.c.tag_id),
-            },
-        )
-        
+    mapper(Idea, idea_table)
+
     mapper(IdeaTag, idea_tag_table, properties={
             'tag':relation(Tag),
             'idea':relation(Idea),
-            },
-            primary_key=[
-                idea_tag_table.c.tag_id,
-                idea_tag_table.c.idea_id
-            ]
+            }
         )
 
+def migrate_v2():
 
+    log.debug('Migrating apps tables to v2. This may take a while...')
+
+    statements='''
+        CREATE TABLE application_tag_temp AS SELECT * FROM application_tag;
+        CREATE TABLE idea_tag_temp AS SELECT * FROM idea_tag;
+        '''
+    Session.execute(statements)
+    Session.commit()
+
+    application_tag_table.drop()
+    idea_tag_table.drop()
+
+    application_tag_table.create()
+    idea_tag_table.create()
+    Session.commit()
+    apps_tags = Session.execute('SELECT application_id,tag_id from application_tag_temp')
+    ideas_tags = Session.execute('SELECT idea_id,tag_id from idea_tag_temp')
+
+    for app_tag in apps_tags:
+        Session.execute('''INSERT INTO application_tag (id,application_id,tag_id) VALUES ('%s','%s','%s')''' %
+                        (make_uuid(), app_tag[0],app_tag[1]))
+
+    for idea_tag in ideas_tags:
+        Session.execute('''INSERT INTO idea_tag (id,idea_id,tag_id) VALUES ('%s','%s','%s')''' %
+                        (make_uuid(), idea_tag[0],idea_tag[1]))
+
+    statements='''
+        DROP TABLE application_tag_temp;
+        DROP TABLE idea_tag_temp;
+        '''
+    Session.execute(statements)
+    Session.commit()
+
+    log.info('Apps tables migrated to v2')
