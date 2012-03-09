@@ -99,6 +99,12 @@ def delete_application(application_name):
     application = Application.by_name(application_name)
     if not application_name:
         abort(404)
+    app_tags = Session.query(ApplicationTag) \
+        .filter(ApplicationTag.application_id==application.id) \
+        .all()
+    for app_tag in app_tags:
+        app_tag.delete()
+
     application.delete()
     Session.commit()
 

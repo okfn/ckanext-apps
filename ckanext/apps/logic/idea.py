@@ -69,6 +69,12 @@ def delete_idea(idea_name):
     idea = Idea.by_name(idea_name)
     if not idea_name:
         abort(404)
+    idea_tags = Session.query(IdeaTag) \
+        .filter(IdeaTag.idea_id==idea.id) \
+        .all()
+    for idea_tag in idea_tags:
+        idea_tag.delete()
+
     idea.delete()
     Session.commit()
 
