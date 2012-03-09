@@ -8,7 +8,7 @@ class TestAppController:
     @classmethod
     def setup_class(cls):
         config = appconfig('config:test.ini', relative_to=conf_dir)
-        config.local_conf['ckan.plugins'] = 'community'
+        config.local_conf['ckan.plugins'] = 'apps'
         wsgiapp = make_app(config.global_conf, **config.local_conf)
         cls.app = paste.fixture.TestApp(wsgiapp)
         CreateTestData.create()
