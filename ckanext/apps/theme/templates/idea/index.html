@@ -24,7 +24,7 @@
         uses of data.
         <br/>
         <p py:if="c.auth_for_create">
-          Have an idea?<br/>${h.link_to('Share your idea', h.url_for(action='new'))}
+          Have an idea?<br/>${h.link_to('Share your idea', h.url_for( controller='ckanext.apps.controllers.idea:IdeaController',action='new'))}
         </p>
       </p>
     </li>

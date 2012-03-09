@@ -14,12 +14,12 @@
   <py:match path="minornavigation">
     <py:if test="c.idea">
     <ul class="tabbed">
-      <li>${h.subnav_link(c, h.icon('lightbulb') + _('View'), action='read', id=c.idea.name)}</li>
+      <li>${h.subnav_link(c, h.icon('lightbulb') + _('View'), controller='ckanext.apps.controllers.idea:IdeaController', action='read', id=c.idea.name)}</li>
       <li py:if="c.auth_for_update">
-        ${h.subnav_link(c, h.icon('lightbulb_add') + _('Edit'), action='edit', id=c.idea.name)}
+        ${h.subnav_link(c, h.icon('lightbulb_add') + _('Edit'), controller='ckanext.apps.controllers.idea:IdeaController',action='edit', id=c.idea.name)}
       </li>
       <li py:if="c.auth_for_delete">
-        ${h.subnav_link(c, h.icon('lightbulb_delete') + _('Delete'), action='delete', id=c.idea.name)}
+        ${h.subnav_link(c, h.icon('lightbulb_delete') + _('Delete'), controller='ckanext.apps.controllers.idea:IdeaController',action='delete', id=c.idea.name)}
       </li>
     </ul>
     </py:if>

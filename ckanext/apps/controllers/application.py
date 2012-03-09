@@ -8,9 +8,9 @@ from pylons.i18n import _
 
 from ckan.model import System, Action
 from ckan.authz import Authorizer
-from ckan.lib.helpers import Page
+from ckan.lib.helpers import Page,pager_url
 from ckan.lib.base import BaseController, c, g, request, h, \
-                          response, session, render, config, abort
+                          response, session, render, config, abort, redirect
 from ckan.lib.navl.dictization_functions import DataError, validate
 from ckan.logic import ValidationError
 
@@ -24,10 +24,12 @@ class AppController(BaseController):
 
     def _render_index(self, apps):
         c.auth_for_create = self.authz.am_authorized(c, Action.PACKAGE_CREATE, System())
+
         c.page = Page(
             collection=apps,
             page=int(request.params.get('page', 1)),
-            items_per_page=10)
+            items_per_page=10,
+            url=pager_url)
         return render('app/index.html')
 
     def index(self):
@@ -45,7 +47,7 @@ class AppController(BaseController):
                 image = request.POST.get('image')
                 data_dict = dict(request.params)
                 app = create_application(data_dict, image)
-                h.redirect_to(action='read', id=app.name)
+                redirect('/app/%s' % app.name)
             except ValidationError, e:
                 errors = e.error_dict
                 error_summary = e.error_summary
@@ -87,7 +89,7 @@ class AppController(BaseController):
         if not self.authz.am_authorized(c, Action.PURGE, System()):
             abort(401, _('Unauthorized to delete application'))
         delete_application(id)
-        return h.redirect_to(h.url_for('apps'))
+        return redirect('/apps')
 
     def edit(self, id, data={}, errors={}, error_summary={}):
         c.auth_for_update = self.authorizer.am_authorized(c, Action.CHANGE_STATE, System())
@@ -105,7 +107,7 @@ class AppController(BaseController):
                 app = edit_application(c.app, data_dict,
                         request.POST.get('image'),
                         request.POST.getall('keep_images'))
-                h.redirect_to(action='read', id=app.name)
+                redirect('/app/%s' % app.name)
             except ValidationError, e:
                 errors = e.error_dict
                 error_summary = e.error_summary

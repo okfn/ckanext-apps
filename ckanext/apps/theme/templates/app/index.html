@@ -22,7 +22,7 @@
         from everyday matters to affairs of state.
         <br/>
         <p py:if="c.auth_for_create">
-          Are you a developer?<br/>${h.link_to('Share your app', h.url_for(action='new'))}
+          Are you a developer?<br/>${h.link_to('Share your app', h.url_for(controller='ckanext.apps.controllers.application:AppController',action='new'))}
         </p>
       </p>
     </li>

@@ -3,9 +3,9 @@ from pylons.i18n import _
 
 from ckan.model import System, Action
 from ckan.authz import Authorizer
-from ckan.lib.helpers import Page
+from ckan.lib.helpers import Page, pager_url
 from ckan.lib.base import BaseController, c, g, request, h, \
-                          response, session, render, config, abort
+                          response, session, render, config, abort, redirect
 from ckan.lib.navl.dictization_functions import DataError, validate
 from ckan.logic import ValidationError
 
@@ -22,7 +22,9 @@ class IdeaController(BaseController):
         c.page = Page(
             collection=ideas,
             page=int(request.params.get('page', 1)),
-            items_per_page=10)
+            items_per_page=10,
+            url=pager_url
+            )
         return render('idea/index.html')
 
     def index(self):
@@ -39,7 +41,7 @@ class IdeaController(BaseController):
             try:
                 data_dict = dict(request.params)
                 idea = create_idea(data_dict)
-                h.redirect_to(action='read', id=idea.name)
+                redirect('/idea/%s' % idea.name)
             except ValidationError, e:
                 errors = e.error_dict
                 error_summary = e.error_summary
@@ -61,7 +63,7 @@ class IdeaController(BaseController):
         if not self.authz.am_authorized(c, Action.PURGE, System()):
             abort(401, _('Unauthorized to delete idea'))
         delete_idea(id)
-        return h.redirect_to(h.url_for('ideas'))
+        return redirect('/idea')
 
     def edit(self, id, data={}, errors={}, error_summary={}):
         c.auth_for_update = self.authorizer.am_authorized(c, Action.CHANGE_STATE, System())
@@ -76,7 +78,7 @@ class IdeaController(BaseController):
             try:
                 data_dict = dict(request.params)
                 idea = edit_idea(c.idea, data_dict)
-                h.redirect_to(action='read', id=idea.name)
+                redirect('/idea/%s' % idea.name)
             except ValidationError, e:
                 errors = e.error_dict
                 error_summary = e.error_summary
