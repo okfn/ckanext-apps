@@ -13,7 +13,7 @@
 
   <py:match path="minornavigation">
     <py:if test="c.idea">
-    <ul class="tabbed">
+    <ul class="nav nav-pills">
       <li>${h.subnav_link(c, h.icon('lightbulb') + _('View'), controller='ckanext.apps.controllers.idea:IdeaController', action='read', id=c.idea.name)}</li>
       <li py:if="c.auth_for_update">
         ${h.subnav_link(c, h.icon('lightbulb_add') + _('Edit'), controller='ckanext.apps.controllers.idea:IdeaController',action='edit', id=c.idea.name)}
@@ -26,12 +26,6 @@
   </py:match>
 
   <py:match path="primarysidebar">
-    <!--li class="widget-container boxed widget_text" py:if="not c.hide_welcome_message">
-      <h3>First time at ${g.site_title}?</h3>        
-      <p>
-          ${g.site_title} is a catalogue for data. ${h.subnav_link(c, _('Click here to find out more ...'), controller='home', action='about', id=None)}
-      </p>
-    </li-->
 
     <li class="widget-container widget_text">
       <ul class="property-list">
@@ -52,7 +46,7 @@
   </py:match>
 
   <div py:match="content" class="community-content">
-    ${h.literal(h.markdown(c.idea.description))}
+    ${h.literal(h.markdown_extract(c.idea.description))}
   </div>
 
 <xi:include href="../layout.html" />
