@@ -8,7 +8,7 @@
 
   <span py:def="apps_list(apps)"
     py:with="ctl = 'ckanext.apps.controllers.application:AppController'">
-    <div py:for="app in apps" class="span-7 app">
+    <div py:for="app in apps" class="span2 app">
       <py:if test="len(app.images)">
         <a href="${h.url_for(controller=ctl, action='read', id=app.name)}">
           <img src="/app/image/${app.images[0].id}@240x165" class="screenshot" />
@@ -28,7 +28,7 @@
 
   <span py:def="ideas_list(ideas)"
     py:with="ctl = 'ckanext.apps.controllers.idea:IdeaController'">
-    <div py:for="idea in ideas" class="span-7 app">
+    <div py:for="idea in ideas" class="span2 app">
       <h3>
         ${h.link_to(idea.title, h.url_for(controller=ctl, action='read', id=idea.name))}
       </h3>

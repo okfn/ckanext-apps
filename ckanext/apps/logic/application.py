@@ -2,11 +2,15 @@
 from ckan.logic import ValidationError
 from ckan.lib.navl.dictization_functions import DataError, validate
 from ckan.lib.base import abort
-from ckan.logic.action.update import prettify
 from ckan.model import Session, Tag
 
 from ckanext.apps.schema import application_schema
 from ckanext.apps.model import Application, ApplicationImage, ApplicationTag
+
+def prettify(field_name):
+    field_name = re.sub('(?<!\w)[Uu]rl(?!\w)', 'URL',
+                        field_name.replace('_', ' ').capitalize())
+    return _(field_name.replace('_', ' '))
 
 def all_applications():
     return Session.query(Application)
