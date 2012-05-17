@@ -9,14 +9,12 @@ Installation and Activation
 
 To install the plugin, enter your virtualenv and load the source::
 
-::
 
-    (ckan)$ pip install -e hg+https://bitbucket.org/okfn/ckanext-community#egg=ckanext-community
+    (ckan)$ pip install -e git+https://github.com/okfn/ckanext-apps#egg=ckanext-apps
 
 This will also register a plugin entry point, so you now should be 
 able to add the following to your CKAN .ini file::
 
-::
 
     ckan.plugins = community <other-plugins>
  
