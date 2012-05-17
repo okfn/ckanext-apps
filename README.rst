@@ -4,6 +4,14 @@ Apps and Ideas Extension
 The Apps and Ideas extension for CKAN adds functionality to associate apps
 and ideas to datasets in your CKAN instance.
 
+Requirement(s)
+--------------
+
+If using the Ubuntu 10.04 LTS appliance "package installation" method (Option 
+1 in the documentation), you'll need to install python-imaging, e.g.
+
+	sudo apt-get install python-imaging
+
 Installation and Activation
 ---------------------------
 
