@@ -4,9 +4,10 @@ Apps and Ideas Extension
 DEPRECATED
 ----------
 
-The ckanext-apps extension is deprecated, it has been replaced by the Related
-Items feature in CKAN core. Tools have been added to this repository to migrate
-a ckanext-apps deployment to CKAN Related Items:
+The ckanext-apps extension is deprecated, it has been replaced by the
+`Related Items <http://docs.ckan.org/en/latest/apps-ideas.html>`_ feature in
+CKAN core. Tools have been added to this repository to migrate a ckanext-apps
+deployment to CKAN Related Items:
 
 1. Update your version of ckanext-apps to the latest commit on the master
    branch and run ``python setup.py develop`` in the ckanext-apps dir.
