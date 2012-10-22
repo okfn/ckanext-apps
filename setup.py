@@ -27,5 +27,8 @@ setup(
 	"""
     [ckan.plugins]
 	apps=ckanext.apps.plugin:Apps
+
+    [paste.paster_command]
+    ckanext-apps-migrate = ckanext.apps.cli:CkanextAppsMigrateCommand
 	""",
 )
